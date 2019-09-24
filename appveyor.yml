@@ -37,7 +37,7 @@ notifications:
   - provider: Email
     to: 
         - b.van_lew@lumc.nl
-    subject: "CRoaring package Windows build: {{status}}"
+    subject: "flann package Windows build: {{status}}"
     message: "URL is {{buildUrl}}."
     on_build_success: true
     on_build_failure: true
