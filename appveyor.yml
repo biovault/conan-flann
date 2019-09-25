@@ -4,15 +4,10 @@ skip_commits:
 
 # branches to build
 branches:
-  # exclude these versions because the do not build on Windows
-  except:
-    - testing/1.8.4
-    - stable/1.8.4   
-  # permit the rest
+  # exclude certain versions that do not build on Windows
   only:
-    - /testing\/*/
-    - /stable\/*/
- 
+    - /testing\/(?!1.8.4)/
+    - /stable\/(?!1.8.4)/
     
 environment:
     PYTHON_HOME: "C:\\Python37"
