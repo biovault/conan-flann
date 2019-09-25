@@ -10,9 +10,10 @@ env:
       -  CONAN_UPLOAD_ONLY_WHEN_STABLE=1
       
 branches:
+  # whitelist
   only:
-  - /testing\/*/
-  - /stable\/*/
+    - /testing\/(?!1.8.5)/
+    - /stable\/(?!1.8.5)/
 
 linux: &linux
    os: linux
