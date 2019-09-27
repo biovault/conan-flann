@@ -8,6 +8,7 @@ env:
       -  CONAN_PASSWORD=$CONAN_PASSWORD_SECRET  
       -  CONAN_SKIP_CHECK_CREDENTIALS=1
       -  CONAN_UPLOAD_ONLY_WHEN_STABLE=1
+      -  CONAN_REMOTES="https://api.bintray.com/conan/bincrafters/public-conan"
       
 branches:
   # whitelist
