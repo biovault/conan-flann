@@ -38,6 +38,12 @@ class FlannConan(ConanFile):
                 "flann/src/cpp/CMakeLists.txt", 
                 'add_library(flann SHARED "")', 
                 'add_library(flann SHARED "empty.cpp")')
+        if self.settings.os == "Macos":
+            tools.replace_in_file(
+                "flann/src/cpp/flann/algorithms/kdtree_index.h",
+                "#include <cstring>",
+                '''#include <cstring>
+                   #include <cstdlib>''')            
 
     def build(self):
         # self.run("cmake --build . --target help")
