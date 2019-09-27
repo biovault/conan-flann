@@ -5,13 +5,9 @@ from conans import ConanFile, CMake, tools
 
 class FlannTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = (("hdf5/1.10.1@lkeb/stable"), 
-                ("lz4/1.8.3@bincrafters/stable"))
+    requires = "hdf5/1.10.1@lkeb/stable"
     generators = "cmake"
 
-    def configure(self):
-        if self.settings.os == "Linux":
-            self.options["lz4"].compiler.version=8
     def build(self):
         cmake = CMake(self)
         # Current dir is "test_package/build/<build_id>" and CMakeLists.txt is
