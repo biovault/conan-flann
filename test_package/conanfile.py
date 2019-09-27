@@ -9,6 +9,9 @@ class FlannTestConan(ConanFile):
                 ("lz4/1.8.3@bincrafters/stable"))
     generators = "cmake"
 
+    def configure(self):
+        if self.settings.os == "Linux":
+            self.options["lz4"].compiler_version=8
     def build(self):
         cmake = CMake(self)
         # Current dir is "test_package/build/<build_id>" and CMakeLists.txt is
