@@ -45,7 +45,7 @@ class FlannConan(ConanFile):
 #include <cstdlib>''')  
             tools.replace_in_file(
                 "flann/src/cpp/flann/algorithms/kdtree_index.h",
-                "abs", "std::abs")           
+                "abs", "fabs")           
 
     def build(self):
         # self.run("cmake --build . --target help")
