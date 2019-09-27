@@ -5,7 +5,7 @@ from conans import ConanFile, CMake, tools
 
 class FlannTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = (("hdf5/1.10.1@bvanlew/stable"), 
+    requires = (("hdf5/1.10.1@lkeb/stable"), 
                 ("lz4/1.8.3@bincrafters/stable"))
     generators = "cmake"
 
