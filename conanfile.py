@@ -41,9 +41,8 @@ class FlannConan(ConanFile):
         if self.settings.os == "Macos":
             tools.replace_in_file(
                 "flann/src/cpp/flann/algorithms/kdtree_index.h",
-                "#include <cstring>",
-                '''#include <cstring>
-                   #include <cstdlib>''')            
+                "#include <cstring>", '''#include <cstring>
+#include <cstdlib>''')            
 
     def build(self):
         # self.run("cmake --build . --target help")
