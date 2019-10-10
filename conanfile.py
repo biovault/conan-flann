@@ -3,7 +3,7 @@ import os
 
 class FlannConan(ConanFile):
     name = "flann"
-    version = "1.8.5"
+    version = "1.9.1"
     license = "MIT"
     author = "B. van Lew b.van_lew@lumc.nl"
     url = "https://dl.bintray.com/bldrvnlw/conan-repo/flann"
