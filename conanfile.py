@@ -53,6 +53,7 @@ class FlannConan(ConanFile):
         self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
         self.copy("*.hpp", src="flann/src/cpp", dst="include", keep_path=True)  
         self.copy("*flann.lib", dst="lib", keep_path=False)
+        self.copy("*flann_cpp_s.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
         self.copy("*.dylib", dst="lib", keep_path=False)
