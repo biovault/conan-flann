@@ -65,6 +65,44 @@ matrix:
               BUILD_DOC=OFF
               USE_MPI=OFF
               BUILD_C_BINDINGS=ON
+              HDF5_IS_PARALLEL=OFF    
+      - <<: *linux
+        env: 
+            - CONAN_GCC_VERSIONS=5
+              CONAN_DOCKER_IMAGE=conanio/gcc5
+              CONAN_ARCHS=x86_64
+              CONAN_BUILD_REQUIRES 
+              CONAN_BUILD_TYPES=Release   
+              PYTHON_EXECUTABLE=NOT_FOUND
+              BUILD_SHARED_LIBS=ON
+              HDF5_DIR=HDF5-NOT-FOUND
+              BUILD_PYTHON_BINDINGS=OFF
+              BUILD_MATLAB_BINDINGS=OFF
+              BUILD_CUDA_LIB=OFF
+              BUILD_EXAMPLES=OFF
+              BUILD_TESTS=OFF
+              BUILD_DOC=OFF
+              USE_MPI=OFF
+              BUILD_C_BINDINGS=ON
+              HDF5_IS_PARALLEL=OFF     
+      - <<: *linux
+        env: 
+            - CONAN_GCC_VERSIONS=5
+              CONAN_DOCKER_IMAGE=conanio/gcc5
+              CONAN_ARCHS=x86_64
+              CONAN_BUILD_REQUIRES 
+              CONAN_BUILD_TYPES=Debug   
+              PYTHON_EXECUTABLE=NOT_FOUND
+              BUILD_SHARED_LIBS=ON
+              HDF5_DIR=HDF5-NOT-FOUND
+              BUILD_PYTHON_BINDINGS=OFF
+              BUILD_MATLAB_BINDINGS=OFF
+              BUILD_CUDA_LIB=OFF
+              BUILD_EXAMPLES=OFF
+              BUILD_TESTS=OFF
+              BUILD_DOC=OFF
+              USE_MPI=OFF
+              BUILD_C_BINDINGS=ON
               HDF5_IS_PARALLEL=OFF                 
       - <<: *osx
         osx_image: xcode10.3
