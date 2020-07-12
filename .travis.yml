@@ -103,7 +103,43 @@ matrix:
               BUILD_DOC=OFF
               USE_MPI=OFF
               BUILD_C_BINDINGS=ON
-              HDF5_IS_PARALLEL=OFF                 
+              HDF5_IS_PARALLEL=OFF
+      - <<: *osx
+        osx_image: xcode9.4
+        env: 
+            - CONAN_APPLE_CLANG_VERSIONS=9.1
+              CONAN_ARCHS=x86_64
+              CONAN_BUILD_TYPES=Release 
+              PYTHON_EXECUTABLE=NOT_FOUND
+              BUILD_SHARED_LIBS=ON
+              HDF5_DIR=HDF5-NOT-FOUND
+              BUILD_PYTHON_BINDINGS=OFF
+              BUILD_MATLAB_BINDINGS=OFF
+              BUILD_CUDA_LIB=OFF
+              BUILD_EXAMPLES=OFF
+              BUILD_TESTS=OFF
+              BUILD_DOC=OFF
+              USE_MPI=OFF
+              BUILD_C_BINDINGS=ON
+              HDF5_IS_PARALLEL=OFF               
+      - <<: *osx
+        osx_image: xcode9.4
+        env: 
+            - CONAN_APPLE_CLANG_VERSIONS=9.1
+              CONAN_ARCHS=x86_64
+              CONAN_BUILD_TYPES=Debug 
+              PYTHON_EXECUTABLE=NOT_FOUND
+              BUILD_SHARED_LIBS=ON
+              HDF5_DIR=HDF5-NOT-FOUND
+              BUILD_PYTHON_BINDINGS=OFF
+              BUILD_MATLAB_BINDINGS=OFF
+              BUILD_CUDA_LIB=OFF
+              BUILD_EXAMPLES=OFF
+              BUILD_TESTS=OFF
+              BUILD_DOC=OFF
+              USE_MPI=OFF
+              BUILD_C_BINDINGS=ON
+              HDF5_IS_PARALLEL=OFF              
       - <<: *osx
         osx_image: xcode10.3
         env: 
