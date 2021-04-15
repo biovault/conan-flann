@@ -26,6 +26,18 @@ class FlannConan(ConanFile):
                 "conan_basic_setup()"
         )     
         os.chdir("..")
+        # Workaround for empty source error with CMake > 3.10
+        # see issue https://github.com/mariusmuja/flann/issues/369
+        if self.settings.os == "Linux" or self.settings.os == "Macos":
+            self.run("touch flann/src/cpp/empty.cpp")
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt", 
+                'add_library(flann_cpp SHARED "")', 
+                'add_library(flann_cpp SHARED empty.cpp)')
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt", 
+                'add_library(flann SHARED "")', 
+                'add_library(flann SHARED "empty.cpp")')
         tools.replace_in_file("flann/CMakeLists.txt", "project(flann)", conanproj)
 
     def build(self):
