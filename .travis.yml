@@ -13,8 +13,8 @@ env:
 branches:
   # whitelist
   only:
-    - /testing\/(?!1.9.1)/
-    - /stable\/(?!1.9.1)/
+    - /testing\/(?!1.8.5)/
+    - /stable\/(?!1.8.5)/
 
 linux: &linux
    os: linux
