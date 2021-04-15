@@ -1,7 +1,7 @@
 env:
     global: 
       -  CONAN_STABLE_BRANCH_PATTERN="stable/*"
-      -  CONAN_UPLOAD="http://cytosplore.lumc.nl:8081/artifactory/api/conan/conan-local"
+      -  CONAN_UPLOAD="https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local"
       -  CONAN_USERNAME="lkeb" # name used for package reference
       -  CONAN_CHANNEL="stable" # channel used for package naming 
       -  CONAN_LOGIN_USERNAME="admin"
@@ -9,6 +9,7 @@ env:
       -  CONAN_SKIP_CHECK_CREDENTIALS=1
       -  CONAN_UPLOAD_ONLY_WHEN_STABLE=1
       -  CONAN_REMOTES="https://api.bintray.com/conan/bincrafters/public-conan"
+      -  CONAN_CA_CERT="cacert.pem"
       
 branches:
   # whitelist
