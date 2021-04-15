@@ -9,7 +9,6 @@ env:
       -  CONAN_SKIP_CHECK_CREDENTIALS=1
       -  CONAN_UPLOAD_ONLY_WHEN_STABLE=1
       -  CONAN_REMOTES="https://api.bintray.com/conan/bincrafters/public-conan"
-      -  CONAN_CA_CERT="cacert.pem"
       
 branches:
   # whitelist
@@ -179,6 +178,8 @@ matrix:
               HDF5_IS_PARALLEL=OFF
               
 install:
+  - chmod +x .ci/pemsetup.sh
+  - ./.ci/pemsetup.sh
   - chmod +x .ci/install.sh
   - ./.ci/install.sh
 

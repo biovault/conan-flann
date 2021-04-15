@@ -11,7 +11,7 @@ branches:
     
 environment:
     PYTHON_HOME: "C:\\Python37"
-    CONAN_UPLOAD: http://cytosplore.lumc.nl:8081/artifactory/api/conan/conan-local
+    CONAN_UPLOAD: http://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local
     CONAN_STABLE_BRANCH_PATTERN: "stable/*"
     CONAN_USERNAME: "lkeb" # name used for package naming
     CONAN_CHANNEL: "stable" # channel used for package naming 
@@ -38,6 +38,8 @@ install:
   - pip.exe install conan --upgrade
   - pip.exe install conan_package_tools bincrafters_package_tools
   - conan user # It creates the conan data directory
+  - for /f "delims=" %%i in ('conan config home') do set CONANPEMHOME=%%i
+  - type cacert.pem >> %CONANPEMHOME%\cacert.pem
 
 notifications:
   - provider: Email
