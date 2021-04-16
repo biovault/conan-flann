@@ -180,10 +180,10 @@ matrix:
 install:
   - chmod +x .ci/pemsetup.sh
   - chmod +x .ci/install.sh
-  - ./.ci/install.sh
-  - ./.ci/pemsetup.sh
+  - .ci/install.sh
 
 script:
+  - ./.ci/pemsetup.sh
   - chmod +x .ci/run.sh
   - ./.ci/run.sh
 
