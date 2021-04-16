@@ -183,7 +183,7 @@ install:
   - .ci/install.sh
 
 script:
-  - export conanhome=`conan config home` && echo $conanhome
+  - export conanhome=~/.conan && echo $conanhome
   - ./.ci/pemsetup.sh $conanhome
   - chmod +x .ci/run.sh
   - ./.ci/run.sh
