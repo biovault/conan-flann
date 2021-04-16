@@ -179,9 +179,9 @@ matrix:
               
 install:
   - chmod +x .ci/pemsetup.sh
-  - ./.ci/pemsetup.sh
   - chmod +x .ci/install.sh
   - ./.ci/install.sh
+  - ./.ci/pemsetup.sh
 
 script:
   - chmod +x .ci/run.sh
