@@ -29,6 +29,10 @@ osx: &osx
   script:
     - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
     - conan create . $CONAN_REFERENCE --profile action_build
+  after_success:
+    - conan user -p $CONAN_PASSWORD $CONAN_LOGIN_USERNAME -r lkeb-artifactory
+    - conan upload -r lkeb-artifactory --all --force -c $CONAN_REFERENCE
+
   
 matrix:
    include:
