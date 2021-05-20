@@ -74,24 +74,11 @@ matrix:
       #         USE_MPI=OFF
       #         BUILD_C_BINDINGS=ON
       #         HDF5_IS_PARALLEL=OFF
-      # - <<: *osx
-      #   osx_image: xcode9.4
-      #   env:
-      #       - CONAN_APPLE_CLANG_VERSIONS=9.1
-      #         CONAN_ARCHS=x86_64
-      #         CONAN_BUILD_TYPES=Release
-      #         PYTHON_EXECUTABLE=NOT_FOUND
-      #         BUILD_SHARED_LIBS=ON
-      #         HDF5_DIR=HDF5-NOT-FOUND
-      #         BUILD_PYTHON_BINDINGS=OFF
-      #         BUILD_MATLAB_BINDINGS=OFF
-      #         BUILD_CUDA_LIB=OFF
-      #         BUILD_EXAMPLES=OFF
-      #         BUILD_TESTS=OFF
-      #         BUILD_DOC=OFF
-      #         USE_MPI=OFF
-      #         BUILD_C_BINDINGS=ON
-      #         HDF5_IS_PARALLEL=OFF
+      - name: OSX xcode9.4
+        osx_image: xcode9.4
+        env: CONAN_COMPILERVERSION=9.1 CONAN_APPLE_CLANG_VERSIONS=9.1 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.9 HOMEBREW_NO_AUTO_UPDATE=1
+        <<: *osx_defaults
+
       - <<: *osx
         osx_image: xcode10.3
         env: CONAN_COMPILERVERSION=10.0 CONAN_APPLE_CLANG_VERSIONS=10.0 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.13 HOMEBREW_NO_AUTO_UPDATE=1
