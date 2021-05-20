@@ -1,13 +1,15 @@
 from conans import ConanFile, CMake, tools
 import os
 
-class FlannConan(ConanFile):
+
+class FlannDualConan(ConanFile):
     name = "flann"
     version = "1.8.4"
     license = "MIT"
     author = "B. van Lew b.van_lew@lumc.nl"
     url = "https://dl.bintray.com/bldrvnlw/conan-repo/flann"
-    description = "3rd party library for Fast Library for Approximate Nearest Neighbors by Marius Muja and David Lowe"
+    description = """3rd party library for Fast Library for
+    Approximate Nearest Neighbors by Marius Muja and David Lowe"""
     topics = ("nearest neighbor", "high dimensions", "approximated")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
@@ -18,63 +20,66 @@ class FlannConan(ConanFile):
         self.run("git clone https://github.com/mariusmuja/flann.git")
         os.chdir("./flann")
         self.run("git checkout tags/{0}".format(self.version))
-        # This small hack might be useful to guarantee proper /MT /MD linkage
-        # in MSVC if the packaged project doesn't have variables to set it
-        # properly
-        conanproj = ("project(flann)\n" 
-                "include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)\n"
-                "conan_basic_setup()"
-        )     
         os.chdir("..")
         # Workaround for empty source error with CMake > 3.10
         # see issue https://github.com/mariusmuja/flann/issues/369
         if self.settings.os == "Linux" or self.settings.os == "Macos":
             self.run("touch flann/src/cpp/empty.cpp")
             tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt", 
-                'add_library(flann_cpp SHARED "")', 
+                "flann/src/cpp/CMakeLists.txt",
+                'add_library(flann_cpp SHARED "")',
                 'add_library(flann_cpp SHARED empty.cpp)')
             tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt", 
-                'add_library(flann SHARED "")', 
+                "flann/src/cpp/CMakeLists.txt",
+                'add_library(flann SHARED "")',
                 'add_library(flann SHARED "empty.cpp")')
         if self.settings.os == "Macos":
             tools.replace_in_file(
                 "flann/src/cpp/flann/algorithms/kdtree_index.h",
                 "#include <cstring>", '''#include <cstring>
-#include <cmath>''')  
+#include <cmath>''')
             tools.replace_in_file(
                 "flann/src/cpp/flann/algorithms/kdtree_index.h",
-                "abs", "std::fabs")           
+                "abs", "std::fabs")
 
-    def build(self):
-        # self.run("cmake --build . --target help")
-        cmake = CMake(self)
+    def _configure_cmake(self, build_type):
+        if self.settings.os == "Macos":
+            cmake = CMake(self, generator='Xcode', build_type=build_type)
+        else:
+            cmake = CMake(self, build_type=build_type)
         # <bvl> These don't work out of the box on Windows and are not needed
-        # for my environment. If someone can get them working that would be great!
+        # for my environment.
+        # If someone can get them working that would be great!
         cmake.definitions["BUILD_PYTHON_BINDINGS"] = "OFF"
-        cmake.definitions["BUILD_MATLAB_BINDINGS"] = "OFF" 
+        cmake.definitions["BUILD_MATLAB_BINDINGS"] = "OFF"
         cmake.definitions["BUILD_TESTS"] = "OFF"
-        cmake.definitions["BUILD_EXAMPLES"] = "OFF"        
-        # work around failure to produce .lib file for flann_cpp        
+        cmake.definitions["BUILD_EXAMPLES"] = "OFF"
+        # work around failure to produce .lib file for flann_cpp
         if self.settings.os == "Windows" and self.options.shared:
-            cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = True            
+            cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = True
         cmake.configure(source_folder="flann")
         cmake.verbose = True
-        cmake.build()
+        return cmake
 
-        # Explicit way:
-        # self.run('cmake %s/hello %s'
-        #          % (self.source_folder, cmake.command_line))
-        # self.run("cmake --build . %s" % cmake.build_config)
+    def build(self):
+        # Build both release and debug for dual packaging
+        cmake_debug = self._configure_cmake('Debug')
+        cmake_debug.build()
+        # Run install to collect the artifacts
+
+        cmake_release = self._configure_cmake('Release')
+        cmake_release.build()
+        # Run install to collect the artifacts
 
     def package(self):
-        self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
-        self.copy("*.hpp", src="flann/src/cpp", dst="include", keep_path=True)  
+        pass
+
+
+"""     self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
+        self.copy("*.hpp", src="flann/src/cpp", dst="include", keep_path=True)
         self.copy("*flann.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
         self.copy("*.dylib", dst="lib", keep_path=False)
         self.copy("*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.pdb", dst="bin", keep_path=False)
-
+        self.copy(pattern="*.pdb", dst="bin", keep_path=False) """
