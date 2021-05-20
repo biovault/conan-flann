@@ -1,6 +1,6 @@
 Param(
     [Parameter(Mandatory=$true)]
-    [String] $PackageName,
+    [String] $PackageName
 )
 
 $REGEX_TESTING='^testing/(.*)_dual$'
@@ -9,7 +9,7 @@ $REGEX_TAG='^(.*)_dual'
 $branch=[Environment]::GetEnvironmentVariable('APPVEYOR_REPO_BRANCH')
 
 if ( ([Environment]::GetEnvironmentVariable('APPVEYOR_REPO_TAG' -eq 'true') -and 
-     ([Environment]::GetEnvironmentVariable('APPVEYOR_REPO_TAG_NAME') -match $REGEX_TAG) ) {
+     ([Environment]::GetEnvironmentVariable('APPVEYOR_REPO_TAG_NAME') -match $REGEX_TAG)) ) {
     $reference=$PackageName+'/'+$Matches.1+'@lkeb/stable'
     [System.Environment]::SetEnvironmentVariable('CONAN_REFERENCE',$reference, 'User')
 }

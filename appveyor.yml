@@ -52,7 +52,7 @@ build_script:
   #- conan profile update options.shared="True" action_build
   - set CONAN_BASE_PROFILE=action_build
   - set SAVE_PATH=%PATH%
-  - ps: ./.ci\set_appveyor_conan_reference.ps1 flann
+  - ps: .\\.ci\\set_appveyor_conan_reference.ps1 flann
   - refreshenv
   - set PATH=%SAVE_PATH%
   - echo %CONAN_REFERENCE%
