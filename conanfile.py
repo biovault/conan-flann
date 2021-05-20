@@ -4,7 +4,7 @@ import os
 
 class FlannDualConan(ConanFile):
     name = "flann"
-    version = "1.8.4"
+    version = "1.8.5"
     license = "MIT"
     author = "B. van Lew b.van_lew@lumc.nl"
     url = "https://dl.bintray.com/bldrvnlw/conan-repo/flann"
@@ -65,21 +65,28 @@ class FlannDualConan(ConanFile):
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake('Debug')
         cmake_debug.build()
-        # Run install to collect the artifacts
 
         cmake_release = self._configure_cmake('Release')
         cmake_release.build()
-        # Run install to collect the artifacts
+
+    def _pkg_bin(self, build_type):
+        src_dir = f"{self.build_folder}/lib/{build_type}"
+        dst_lib = f"lib/{build_type}"
+        dst_bin = f"bin/{build_type}"
+        self.copy("*flann.lib", src=src_dir, dst=dst_lib, keep_path=False)
+        self.copy("*.dll", src=src_dir, dst=dst_bin, keep_path=False)
+        self.copy("*.so", src=src_dir, dst=dst_lib, keep_path=False)
+        self.copy("*.dylib", src=src_dir, dst=dst_lib, keep_path=False)
+        self.copy("*.a", src=src_dir, dst=dst_lib, keep_path=False)
+        if ((build_type == 'Debug') and
+           (self.settings.compiler == "Visual Studio")):
+            self.copy("*.pdb", src=src_dir, dst=dst_bin, keep_path=False)
 
     def package(self):
-        pass
-
-
-"""     self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
+        self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
         self.copy("*.hpp", src="flann/src/cpp", dst="include", keep_path=True)
-        self.copy("*flann.lib", dst="lib", keep_path=False)
-        self.copy("*.dll", dst="bin", keep_path=False)
-        self.copy("*.so", dst="lib", keep_path=False)
-        self.copy("*.dylib", dst="lib", keep_path=False)
-        self.copy("*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.pdb", dst="bin", keep_path=False) """
+
+        # Debug
+        self._pkg_bin('Debug')
+        # Release
+        self._pkg_bin('Release')

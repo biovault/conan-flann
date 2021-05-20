@@ -61,3 +61,7 @@ build_script:
   - conan install . -s build_type=Debug -s compiler.runtime=MDd --profile action_build
   # Build with conan
   - conan create . %CONAN_REFERENCE% --profile action_build
+
+on_success:
+  - conan user -p %CONAN_PASSWORD% %CONAN_LOGIN_NAME% -r %CONAN_REMOTE%
+  - conan upload -r %CONAN_REMOTE% --all --force -c %CONAN_REFERENCE%

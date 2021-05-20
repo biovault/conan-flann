@@ -12,6 +12,11 @@ Bincrafters packages can be found in the following public Conan repository:
 
 *Note: You can click the "Set Me Up" button on the Bintray page above for instructions on using packages from this repository.*
 
+### "dual" branch
+
+The branch with the *_dual* suffix in the name create a conan package containing both Debug and Release 
+binaries.
+
 ## Issues
 
 If you wish to report an issue or make a request for a Bincrafters package, please do so here:
