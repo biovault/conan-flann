@@ -47,6 +47,7 @@ notifications:
 build_script:
   # add upload as a remote
   - conan remote add %CONAN_REMOTE% %CONAN_UPLOAD%
+  - conan remote list
   # Setup the action_build profile baset on the settinng
   - .\\.ci\\make_profile.bat
   #- conan profile update options.shared="True" action_build
@@ -63,5 +64,5 @@ build_script:
   - conan create . %CONAN_REFERENCE% --profile action_build
 
 on_success:
-  - conan user -p %CONAN_PASSWORD% %CONAN_LOGIN_NAME% -r %CONAN_REMOTE%
+  - conan user -p %CONAN_PASSWORD% -r %CONAN_REMOTE% %CONAN_LOGIN_USERNAME%
   - conan upload -r %CONAN_REMOTE% --all --force -c %CONAN_REFERENCE%
