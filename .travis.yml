@@ -1,14 +1,8 @@
 env:
     global: 
-      -  CONAN_STABLE_BRANCH_PATTERN="stable/*"
-      -  CONAN_UPLOAD="http://cytosplore.lumc.nl:8081/artifactory/api/conan/conan-local"
-      -  CONAN_USERNAME="lkeb" # name used for package reference
-      -  CONAN_CHANNEL="stable" # channel used for package naming 
+      -  CONAN_UPLOAD="https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local"
       -  CONAN_LOGIN_USERNAME="admin"
       -  CONAN_PASSWORD=$CONAN_PASSWORD_SECRET  
-      -  CONAN_SKIP_CHECK_CREDENTIALS=1
-      -  CONAN_UPLOAD_ONLY_WHEN_STABLE=1
-      -  CONAN_REMOTES="https://api.bintray.com/conan/bincrafters/public-conan"
 
 branches:
   # whitelist
@@ -30,6 +24,8 @@ osx: &osx
     - chmod +x .ci/pemsetup.sh
     - chmod +x .ci/conan_dependencies.sh
     - chmod +x .ci/set_travis_conan_reference.sh
+  install:
+    - .ci/conan_dependencies.sh
   script:
     - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
     - conan create . $CONAN_REFERENCE --profile action_build

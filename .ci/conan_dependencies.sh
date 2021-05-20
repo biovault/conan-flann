@@ -1,3 +1,14 @@
+if [ $# -eq 0 ] ; then
+    project=.
+else
+    project=$1
+fi
+pip3 install --upgrade conan
+conan user
+cd $project && .ci/pemsetup.sh
+conan remote add lkeb-artifactory $CONAN_UPLOAD
+conan remote list
+
 conan profile new action_build --force
 conan profile update settings.os=$CONAN_OS action_build
 conan profile update settings.os_build=$CONAN_OS action_build
