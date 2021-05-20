@@ -29,7 +29,7 @@ osx: &osx
   before_install:
     - chmod +x .ci/pemsetup.sh
     - chmod +x .ci/conan_dependencies.sh
-    - chmod +x .ci/set_travis_conan_reference
+    - chmod +x .ci/set_travis_conan_reference.sh
   script:
     - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
     - conan create . $CONAN_REFERENCE --profile action_build
