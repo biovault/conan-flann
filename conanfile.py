@@ -1,5 +1,7 @@
 from conans import ConanFile, CMake, tools
 import os
+import glob
+import shutil
 
 
 class FlannDualConan(ConanFile):
@@ -65,15 +67,25 @@ class FlannDualConan(ConanFile):
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake('Debug')
         cmake_debug.build()
+        # For linux the binary need to be moved to Debug & Release sub folders
+        if self.settings.os == "Linux":
+            os.mkdir(f"{self.build_folder}/lib/Debug")
+            bins = [f for f in glob.glob(f"{self.build_folder}/lib/*")
+                    if os.path.isfile(f)]
+            for bin in bins:
+                shutil.copyfile(bin, f"{self.build_folder}/lib/Debug")
 
         cmake_release = self._configure_cmake('Release')
         cmake_release.build()
+        if self.settings.os == "Linux":
+            os.mkdir(f"{self.build_folder}/lib/Release")
+            bins = [f for f in glob.glob(f"{self.build_folder}/lib/*")
+                    if os.path.isfile(f)]
+            for bin in bins:
+                shutil.copyfile(bin, f"{self.build_folder}/lib/Release")
 
     def _pkg_bin(self, build_type):
-        if self.settings.os == "Linux":
-            src_dir = f"{self.build_folder}/lib"
-        else:
-            src_dir = f"{self.build_folder}/lib/{build_type}"
+        src_dir = f"{self.build_folder}/lib/{build_type}"
         dst_lib = f"lib/{build_type}"
         dst_bin = f"bin/{build_type}"
         self.copy("*flann.lib", src=src_dir, dst=dst_lib, keep_path=False)
