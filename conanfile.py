@@ -69,20 +69,22 @@ class FlannDualConan(ConanFile):
         cmake_debug.build()
         # For linux the binary need to be moved to Debug & Release sub folders
         if self.settings.os == "Linux":
-            os.mkdir(f"{self.build_folder}/lib/Debug")
+            dst_dir = f"{self.build_folder}/lib/Debug"
+            os.mkdir(dst_dir)
             bins = [f for f in glob.glob(f"{self.build_folder}/lib/*")
                     if os.path.isfile(f)]
             for bin in bins:
-                shutil.copyfile(bin, f"{self.build_folder}/lib/Debug")
+                shutil.copy(bin, dst_dir)
 
         cmake_release = self._configure_cmake('Release')
         cmake_release.build()
         if self.settings.os == "Linux":
-            os.mkdir(f"{self.build_folder}/lib/Release")
+            dst_dir = f"{self.build_folder}/lib/Release"
+            os.mkdir(dst_dir)
             bins = [f for f in glob.glob(f"{self.build_folder}/lib/*")
                     if os.path.isfile(f)]
             for bin in bins:
-                shutil.copyfile(bin, f"{self.build_folder}/lib/Release")
+                shutil.copy(bin, dst_dir)
 
     def _pkg_bin(self, build_type):
         src_dir = f"{self.build_folder}/lib/{build_type}"
