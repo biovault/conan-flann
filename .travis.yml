@@ -26,8 +26,8 @@ linux: &linux
   install:
     - docker exec build_container bash -c "project/.ci/conan_dependencies.sh project"
   script:
-    - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
-    - docker exec build_container bash -c "source .ci/flann_build_flags.sh; cd project && conan create . $CONAN_REFERENCE --profile action_build"
+    - source .ci/set_travis_conan_reference.sh flann && echo $CONAN_REFERENCE
+    - docker exec build_container bash -c "source project/.ci/flann_build_flags.sh; cd project && conan create . $CONAN_REFERENCE --profile action_build"
   after_success:
     - docker exec build_container conan user -p $CONAN_PASSWORD $CONAN_LOGIN_USERNAME -r lkeb-artifactory
     - docker exec build_container conan upload -r lkeb-artifactory --all --force -c $CONAN_REFERENCE
@@ -43,7 +43,7 @@ osx: &osx
     - .ci/conan_dependencies.sh
   script:
     - source .ci/flann_build_flags.sh
-    - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
+    - source .ci/set_travis_conan_reference.sh flann && echo $CONAN_REFERENCE
     - conan create . $CONAN_REFERENCE --profile action_build
   after_success:
     - conan user -p $CONAN_PASSWORD $CONAN_LOGIN_USERNAME -r lkeb-artifactory

@@ -70,7 +70,10 @@ class FlannDualConan(ConanFile):
         cmake_release.build()
 
     def _pkg_bin(self, build_type):
-        src_dir = f"{self.build_folder}/lib/{build_type}"
+        if self.settings.os == "Linux":
+            src_dir = f"{self.build_folder}/lib"
+        else:
+            src_dir = f"{self.build_folder}/lib/{build_type}"
         dst_lib = f"lib/{build_type}"
         dst_bin = f"bin/{build_type}"
         self.copy("*flann.lib", src=src_dir, dst=dst_lib, keep_path=False)
@@ -79,7 +82,7 @@ class FlannDualConan(ConanFile):
         self.copy("*.dylib", src=src_dir, dst=dst_lib, keep_path=False)
         self.copy("*.a", src=src_dir, dst=dst_lib, keep_path=False)
         if ((build_type == 'Debug') and
-           (self.settings.compiler == "Visual Studio")):
+                (self.settings.compiler == "Visual Studio")):
             self.copy("*.pdb", src=src_dir, dst=dst_bin, keep_path=False)
 
     def package(self):
