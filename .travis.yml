@@ -11,12 +11,27 @@ branches:
     - /stable\/(?!1.8.5)/
 
 linux: &linux
-   os: linux
-   dist: xenial
-   language: python
-   python: "3.7"
-   services:
-     - docker
+  os: linux
+  dist: xenial
+  language: python
+  python: "3.7"
+  services:
+    - docker
+  before_install:
+    - chmod +x .ci/pemsetup.sh
+    - chmod +x .ci/conan_dependencies.sh
+    - chmod +x .ci/set_travis_conan_reference.sh
+    - docker pull $DOCKER_IMAGE
+    - docker run -itd -v "$(pwd):/home/conan/project" -e TRAVIS_OS_NAME=$TRAVIS_OS_NAME -e CONAN_COMPILERVERSION=$CONAN_COMPILERVERSION -e CONAN_LIBC=$CONAN_LIBC -e CONAN_UPLOAD=$CONAN_UPLOAD -e CONAN_LOGIN_NAME=$CONAN_LOGIN_NAME -e CONAN_PASSWORD=$CONAN_PASSWORD --name build_container $DOCKER_IMAGE
+  install:
+    - docker exec build_container bash -c "project/.ci/conan_dependencies.sh project"
+  script:
+    - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
+    - docker exec build_container bash -c "source .ci/flann_build_flags.sh; cd project && conan create . $CONAN_REFERENCE --profile action_build"
+  after_success:
+    - docker exec build_container conan user -p $CONAN_PASSWORD $CONAN_LOGIN_USERNAME -r lkeb-artifactory
+    - docker exec build_container conan upload -r lkeb-artifactory --all --force -c $CONAN_REFERENCE
+
 osx: &osx
   os: osx
   language: generic
@@ -27,6 +42,7 @@ osx: &osx
   install:
     - .ci/conan_dependencies.sh
   script:
+    - source .ci/flann_build_flags.sh
     - source .ci/set_travis_conan_reference.sh flann && echo CONAN_REFERENCE
     - conan create . $CONAN_REFERENCE --profile action_build
   after_success:
@@ -40,43 +56,23 @@ matrix:
         env:
             - CONAN_COMPILERVERSION=9
               CONAN_COMPILER=gcc
-              CONAN_DOCKER_IMAGE=conanio/gcc9
-              PYTHON_EXECUTABLE=NOT_FOUND
-              BUILD_SHARED_LIBS=ON
-              HDF5_DIR=HDF5-NOT-FOUND
-              BUILD_PYTHON_BINDINGS=OFF
-              BUILD_MATLAB_BINDINGS=OFF
-              BUILD_CUDA_LIB=OFF
-              BUILD_EXAMPLES=OFF
-              BUILD_TESTS=OFF
-              BUILD_DOC=OFF
-              USE_MPI=OFF
-              BUILD_C_BINDINGS=ON
-              HDF5_IS_PARALLEL=OFF
+              DOCKER_IMAGE=conanio/gcc9
+              CONAN_LIBC=libstdc++
+
       - <<: *linux
         env:
             - CONAN_COMPILERVERSION=8
               CONAN_COMPILER=gcc
-              CONAN_DOCKER_IMAGE=conanio/gcc8
-              PYTHON_EXECUTABLE=NOT_FOUND
-              BUILD_SHARED_LIBS=ON
-              HDF5_DIR=HDF5-NOT-FOUND
-              BUILD_PYTHON_BINDINGS=OFF
-              BUILD_MATLAB_BINDINGS=OFF
-              BUILD_CUDA_LIB=OFF
-              BUILD_EXAMPLES=OFF
-              BUILD_TESTS=OFF
-              BUILD_DOC=OFF
-              USE_MPI=OFF
-              BUILD_C_BINDINGS=ON
-              HDF5_IS_PARALLEL=OFF
-      - <<: *osx
-        osx_image: xcode9.4
-        env: CONAN_COMPILERVERSION=9.1 CONAN_APPLE_CLANG_VERSIONS=9.1 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.9 HOMEBREW_NO_AUTO_UPDATE=1
+              DOCKER_IMAGE=conanio/gcc8
+              CONAN_LIBC=libstdc++
 
-      - <<: *osx
-        osx_image: xcode10.3
-        env: CONAN_COMPILERVERSION=10.0 CONAN_APPLE_CLANG_VERSIONS=10.0 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.13 HOMEBREW_NO_AUTO_UPDATE=1
+      # - <<: *osx
+      #   osx_image: xcode9.4
+      #   env: CONAN_COMPILERVERSION=9.1 CONAN_APPLE_CLANG_VERSIONS=9.1 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.9 HOMEBREW_NO_AUTO_UPDATE=1
+
+      # - <<: *osx
+      #   osx_image: xcode10.3
+      #   env: CONAN_COMPILERVERSION=10.0 CONAN_APPLE_CLANG_VERSIONS=10.0 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.13 HOMEBREW_NO_AUTO_UPDATE=1
 
 notifications:
   email:
