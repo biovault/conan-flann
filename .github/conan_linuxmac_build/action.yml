@@ -49,11 +49,7 @@ runs:
 
         echo Extend conan cacert.pem
         conanhome=`conan config home`
-        echo -e "$CONAN_PEM" >> $conanhome/cacert.pem
-
-      shell: bash
-      env:
-        CONAN_PEM: ${{ inputs.conan-pem }}
+        cat conan.pem >> $conanhome/cacert.pem
 
     - name: Build with conan
       run: |
