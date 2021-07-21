@@ -76,9 +76,10 @@ class FlannDualConan(ConanFile):
                 """#include <cstring>
 #include <cmath>""",
             )
-            tools.replace_in_file(
-                "flann/src/cpp/flann/algorithms/kdtree_index.h", "abs", "std::fabs"
-            )
+            # not used in 1.8.5
+            # tools.replace_in_file(
+            #    "flann/src/cpp/flann/algorithms/kdtree_index.h", "abs", "std::fabs"
+            # )
 
         # Inject flannTargets.cmake logic
         # Logic for flannTargets.cmake
