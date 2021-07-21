@@ -93,7 +93,7 @@ class FlannDualConan(ConanFile):
         )
 
         tools.replace_in_file(
-            "flann/CmakeLists.txt",
+            "flann/CMakeLists.txt",
             "# CPACK options",
             """
 include(./cmake/ConfigInstall.cmake)
