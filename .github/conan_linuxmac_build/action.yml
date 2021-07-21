@@ -51,6 +51,8 @@ runs:
         conanhome=`conan config home`
         cat conan.pem >> $conanhome/cacert.pem
 
+      shell: bash
+
     - name: Build with conan
       run: |
         export CONAN_USER_HOME=`pwd`/_conan
