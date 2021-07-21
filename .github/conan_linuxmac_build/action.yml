@@ -49,7 +49,7 @@ runs:
 
         echo Extend conan cacert.pem
         conanhome=`conan config home`
-        cat conan.pem >> $conanhome/cacert.pem
+        cat cert.pem >> $conanhome/cacert.pem
 
       shell: bash
 

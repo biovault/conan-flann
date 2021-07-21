@@ -39,7 +39,7 @@ runs:
         echo Extend conan cacert.pem
         for /f "delims=" %%i in ('conan config home') do set CONANPEMHOME=%%i
         SETLOCAL EnableDelayedExpansion
-        type conan.pem >> %CONANPEMHOME%\cacert.pem
+        type cert.pem >> %CONANPEMHOME%\cacert.pem
         ENDLOCAL
 
         REM Fish the package name from the conanfile.py
