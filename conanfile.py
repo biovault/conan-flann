@@ -29,7 +29,11 @@ class FlannDualConan(ConanFile):
     def generate(self):
         print("In generate")
 
-        tc = CMakeToolchain(self)
+        generator = None
+        if self.settings.os == "Macos":
+            generator = "Xcode"
+
+        tc = CMakeToolchain(self, generator=generator)
         tc.variables["BUILD_PYTHON_BINDINGS"] = "OFF"
         tc.variables["BUILD_MATLAB_BINDINGS"] = "OFF"
         tc.variables["BUILD_TESTS"] = "OFF"
@@ -45,10 +49,7 @@ class FlannDualConan(ConanFile):
         deps.generate()
 
     def _configure_cmake(self):
-        if self.settings.os == "Macos":
-            cmake = CMake(self, generator="Xcode")
-        else:
-            cmake = CMake(self)
+        cmake = CMake(self)
         cmake.configure(source_folder="flann")
         cmake.verbose = True
         return cmake
