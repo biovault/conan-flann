@@ -75,8 +75,6 @@ jobs:
           conan-build-type: ${{matrix.build-config}}
           conan-user: ${{secrets.LKEB_ARTIFACTORY_USER}}
           conan-password: ${{secrets.LKEB_ARTIFACTORY_PASSWORD}}
-          conan-pem: ${{secrets.LKEB_CERT_CHAIN}}
-          rs_ssh_key: ${{ secrets.RULESSUPPORT_DEPLOY_KEY }}
 
       - name: Linux Mac build
         if: "!startsWith(runner.os, 'Windows')"
@@ -89,4 +87,3 @@ jobs:
           conan-build-os: ${{matrix.build-os}}
           conan-user: ${{secrets.LKEB_ARTIFACTORY_USER}}
           conan-password: ${{secrets.LKEB_ARTIFACTORY_PASSWORD}}
-          conan-pem: ${{secrets.LKEB_CERT_CHAIN}}

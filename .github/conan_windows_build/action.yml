@@ -17,12 +17,6 @@ inputs:
   conan-password:
     description: "pass secrets.LKEB_ARTIFACTORY_PASSWORD"
     required: true
-  conan-pem:
-    description: "pass secrets.LKEB_CERT_CHAIN"
-    required: true
-  rs_ssh_key:
-    description: "pass secrets.RULESSUPPORT_DEPLOY_KEY"
-    required: true
 
 runs:
   using: "composite"
