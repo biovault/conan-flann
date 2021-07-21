@@ -23,6 +23,7 @@ runs:
   steps:
     - name: Install conan & build configuration
       run: |
+        pip install wheel
         pip install conan
         pip install -Iv cmake>=3.17
 
