@@ -104,7 +104,7 @@ include(./cmake/ConfigInstall.cmake)
         # Version is wrong in flann 1.8.5
         if self.version == "1.8.5":
             tools.replace_in_file(
-                "flann/CmakeLists.txt",
+                "flann/CMakeLists.txt",
                 "set(FLANN_VERSION 1.8.4)",
                 "set(FLANN_VERSION 1.8.5)",
             )
