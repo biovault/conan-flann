@@ -66,16 +66,9 @@ jobs:
         with:
           python-version: "3.7"
 
-      # windows-2016 need the SSHAgentFeature added
-      - name: Start ssh key agent
-        if: matrix.os == 'windows-2016'
-        run: |
-          choco install --no-progress -my openssh --params '"/SSHAgentFeature"'
-          refreshenv
-
       - name: Windows build
         if: startsWith(runner.os, 'Windows')
-        uses: ./.github/actions/conan_windows_build
+        uses: ./.github/conan_windows_build
         with:
           conan-visual-version: ${{matrix.build-cversion}}
           conan-visual-runtime: ${{matrix.build-runtime}}
@@ -87,7 +80,7 @@ jobs:
 
       - name: Linux Mac build
         if: "!startsWith(runner.os, 'Windows')"
-        uses: ./.github/actions/conan_linuxmac_build
+        uses: ./.github/conan_linuxmac_build
         with:
           conan-compiler: ${{matrix.build-compiler}}
           conan-compiler-version: ${{matrix.build-cversion}}
