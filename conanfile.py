@@ -178,9 +178,11 @@ include(./cmake/ConfigInstall.cmake)
 
     def package(self):
         # cleanup excess installs - this is a kludge TODO fix cmake
+        print("cleanup")
         for child in Path(self.package_folder, "lib").iterdir():
             if child.is_file():
                 child.unlink()
+        print("end cleanup")
 
         self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
         self.copy("*.hpp", src="flann/src/cpp", dst="include", keep_path=True)
