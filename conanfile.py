@@ -177,6 +177,11 @@ include(./cmake/ConfigInstall.cmake)
             self.copy("*.pdb", src=src_dir, dst=dst_bin, keep_path=False)
 
     def package(self):
+        # cleanup excess installs - this is a kludge TODO fix cmake
+        for child in Path(self.package_folder, "lib").iterdir():
+            if child.is_file():
+                child.unlink()
+
         self.copy("*.h", src="flann/src/cpp", dst="include", keep_path=True)
         self.copy("*.hpp", src="flann/src/cpp", dst="include", keep_path=True)
 
@@ -184,7 +189,3 @@ include(./cmake/ConfigInstall.cmake)
         self._pkg_bin("Debug")
         # Release
         self._pkg_bin("Release")
-        # cleanup excess installs - this is a kludge TODO fix cmake
-        for child in Path(self.package_folder, "lib").iterdir():
-            if child.is_file():
-                child.unlink()
