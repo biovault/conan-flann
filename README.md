@@ -29,6 +29,10 @@ compiler.version=15
 conan create . flann/1.8.5 --profile build_profile -s build_type=Release
 ```
 
+### What gets built?
+
+Both the C and CPP binding versions are built as are static and shared on all platforms. This means that library files with names flann.*, flann_s.*, flann_cpp.*, flann_cpp_s.*are produces (* is lib, dylib, dll depending on platform)
+
 ### "dual" branch
 
 The branch with the *_dual* suffix in the name create a conan package containing both Debug and Release 

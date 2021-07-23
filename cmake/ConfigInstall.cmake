@@ -1,7 +1,11 @@
 # CMake configuration file creation
-
-install(TARGETS flann
+# Building C and CPP bindings static and shared
+install(TARGETS flann flann_s flann_cpp flann_cpp_s
     EXPORT flannTargets
+    LIBRARY DESTINATION lib/$<CONFIGURATION>
+    ARCHIVE DESTINATION lib/$<CONFIGURATION>
+    RUNTIME DESTINATION lib/$<CONFIGURATION>
+    INCLUDES DESTINATION include
 )
 
 # generate and install export file

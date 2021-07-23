@@ -1,11 +1,27 @@
 from conans import ConanFile, tools
 from conan.tools.cmake import CMakeDeps, CMake, CMakeToolchain
+import fnmatch
 import os
 import shutil
 from pathlib import Path
 
 
-class FlannDualConan(ConanFile):
+class FlannMultiConan(ConanFile):
+    """Package flann in a multi config package.
+
+    Designed to work on Window, Macos and Linux
+    Supports Release and Debug in the package,
+    can be easily extended to more e.g.
+    RelWithDebInfo.
+
+    Requires the presence of the following multi config tools:
+        Ninja, on Linux
+        Xcode, on Macos
+        Visual STudio, on Windows
+
+    Cmake must be at least 3.17
+    """
+
     name = "flann"
     version = "1.8.5"
     license = "MIT"
@@ -26,24 +42,43 @@ class FlannDualConan(ConanFile):
         self.run("git checkout tags/{0}".format(self.version))
         os.chdir("..")
 
-    def generate(self):
-        print("In generate")
+    def _get_tc(self):
+        """Generate the CMake configuration using
+        multi-config generators on all platforms, as follows:
 
+        Windows - defaults to Visual Studio
+        Macos - XCode
+        Linux - Ninja Multi-Config
+
+        CMake needs to be at least 3.17 for Ninja Multi-Config
+
+        Returns:
+            CMakeToolchain: a configured toolchain object
+        """
         generator = None
         if self.settings.os == "Macos":
             generator = "Xcode"
+
+        if self.settings.os == "Linux":
+            generator = "Ninja Multi-Config"
 
         tc = CMakeToolchain(self, generator=generator)
         tc.variables["BUILD_PYTHON_BINDINGS"] = "OFF"
         tc.variables["BUILD_MATLAB_BINDINGS"] = "OFF"
         tc.variables["BUILD_TESTS"] = "OFF"
         tc.variables["BUILD_EXAMPLES"] = "OFF"
+        tc.variables["BUILD_DOC"] = "OFF"
         tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
-        tc.variables["CMAKE_INSTALL_PREFIX"] = Path(self.build_folder).joinpath(
-            "install"
-        )
-        if self.settings.os == "Windows" and self.options.shared:
-            tc.variables["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = "ON"
+        tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install"))
+
+        if self.settings.os == "Linux":
+            tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
+
+        return tc
+
+    def generate(self):
+        print("In generate")
+        tc = self._get_tc()
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
@@ -76,7 +111,7 @@ class FlannDualConan(ConanFile):
                 """#include <cstring>
 #include <cmath>""",
             )
-            # not used in 1.8.5
+            # this is already correct in 1.8.5
             # tools.replace_in_file(
             #    "flann/src/cpp/flann/algorithms/kdtree_index.h", "abs", "std::fabs"
             # )
@@ -113,8 +148,6 @@ include(./cmake/ConfigInstall.cmake)
 
     def build(self):
         self._fixup_code()
-        install_dir = Path(self.build_folder).joinpath("install")
-        install_dir.mkdir(exist_ok=True)
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake()
         cmake_debug.install(build_type="Debug")
@@ -134,14 +167,12 @@ include(./cmake/ConfigInstall.cmake)
         self.cpp_info.set_property("cmake_config_file", True)
 
     def _pkg_bin(self, build_type):
+        print(f"package: {build_type}")
         src_dir = f"{self.build_folder}/lib/{build_type}"
         dst_lib = f"lib/{build_type}"
         dst_bin = f"bin/{build_type}"
-        self.copy("*flann.lib", src=src_dir, dst=dst_lib, keep_path=False)
-        self.copy("*.dll", src=src_dir, dst=dst_bin, keep_path=False)
-        self.copy("*.so", src=src_dir, dst=dst_lib, keep_path=False)
-        self.copy("*.dylib", src=src_dir, dst=dst_lib, keep_path=False)
-        self.copy("*.a", src=src_dir, dst=dst_lib, keep_path=False)
+        if self.settings.os == "Windows":
+            self.copy("*.exp", src=src_dir, dst=dst_lib, keep_path=False)
         if (build_type == "Debug") and (self.settings.compiler == "Visual Studio"):
             self.copy("*.pdb", src=src_dir, dst=dst_bin, keep_path=False)
 
@@ -153,3 +184,7 @@ include(./cmake/ConfigInstall.cmake)
         self._pkg_bin("Debug")
         # Release
         self._pkg_bin("Release")
+        # cleanup excess installs - this is a kludge TODO fix cmake
+        for child in Path(self.package_folder, "lib").iterdir():
+            if child.is_file():
+                child.unlink()
