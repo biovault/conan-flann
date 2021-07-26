@@ -6,7 +6,6 @@ install(TARGETS flann flann_s flann_cpp flann_cpp_s
     ARCHIVE DESTINATION lib/$<CONFIGURATION>
     RUNTIME DESTINATION lib/$<CONFIGURATION>
     INCLUDES DESTINATION include
-    NAMELINK_SKIP
 )
 
 # generate and install export file
