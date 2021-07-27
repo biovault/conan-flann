@@ -28,6 +28,9 @@ write_basic_package_version_file(
     COMPATIBILITY SameMajorVersion
 )
 
+set(INCLUDE_INSTALL_DIR include)
+set(LIB_INSTALL_DIR lib)
+
 # Configure 'flann-config.cmake'
 # Use variables:
 #   * targets_export_name
@@ -35,6 +38,7 @@ write_basic_package_version_file(
 configure_package_config_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/flannConfig.cmake"
+    PATH_VARS INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
     INSTALL_DESTINATION lib/cmake/flann
 )
 
