@@ -1,9 +1,18 @@
 # CMake configuration file creation
 # Building C and CPP bindings static and shared
-install(TARGETS flann flann_s flann_cpp flann_cpp_s
+install(TARGETS flann flann_s flann_cpp_s
     EXPORT flannTargets
     LIBRARY DESTINATION lib/$<CONFIGURATION>
     ARCHIVE DESTINATION lib/$<CONFIGURATION>
+    RUNTIME DESTINATION lib/$<CONFIGURATION>
+    INCLUDES DESTINATION include
+)
+
+# flann_cpp has no declspec exports so no /IMPLIB on windows
+# remove ARCHIVE
+install(TARGETS flann_cpp
+    EXPORT flannTargets
+    LIBRARY DESTINATION lib/$<CONFIGURATION>
     RUNTIME DESTINATION lib/$<CONFIGURATION>
     INCLUDES DESTINATION include
 )
