@@ -46,6 +46,6 @@ class FlannTestConan(ConanFile):
             print("Running example...")
             # tools.download("http://www.cs.ubc.ca/research/flann/uploads/FLANN/datasets/dataset.hdf5", "dataset.hdf5")
             if self.settings.os == "Windows":
-                self.run(str(Path(".", "Release", "example.exe")))
+                self.run(str(Path(Path.cwd(), "Release", "example.exe")))
             else:
-                self.run(str(Path(".", "example")))
+                self.run(str(Path(Path.cwd(), "example")))
