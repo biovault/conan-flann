@@ -3,6 +3,7 @@ import h5py
 import numpy as np
 from conans import ConanFile, tools
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
+from pathlib import Path
 
 
 class FlannTestConan(ConanFile):
@@ -15,7 +16,9 @@ class FlannTestConan(ConanFile):
     def generate(self):
         print("Generating toolchain")
         tc = CMakeToolchain(self)
-        tc.variables["flann_ROOT"] = self.deps_cpp_info["flann"].rootpath
+        tc.variables["flann_ROOT"] = Path(
+            self.deps_cpp_info["flann"].rootpath
+        ).as_posix()
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
