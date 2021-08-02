@@ -14,5 +14,13 @@ else()
 endif()
 
 add_executable(example example.cpp)
+# Enable running  from the build directory on MACOS by fixing flann rpath
+if (APPLE)
+    add_custom_command(TARGET example
+       POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
+        "-change" "libflann.1.8.dylib" "${flann_ROOT}/lib/Release/libflann.1.8.dylib"
+        "${CMAKE_BINARY_DIR}/example")
+endif()
+
 #hdf5 and lz4 supplied by CMakeDeps
 target_link_libraries(example flann HDF5::HDF5 lz4::lz4 OpenMP::OpenMP_CXX)
