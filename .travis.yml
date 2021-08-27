@@ -1,14 +1,16 @@
 env:
-    global: 
-      -  CONAN_UPLOAD="https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local"
-      -  CONAN_LOGIN_USERNAME="admin"
-      -  CONAN_PASSWORD=$CONAN_PASSWORD_SECRET  
+  global:
+    - CONAN_UPLOAD="https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local"
+    - CONAN_LOGIN_USERNAME="admin"
+    - CONAN_PASSWORD=$CONAN_PASSWORD_SECRET
 
 branches:
-  # whitelist
-  only:
-    - /testing\/(?!1.8.5)/
-    - /stable\/(?!1.8.5)/
+  #only:
+  #  - /testing\/(?!1.8.4)/
+  #  - /stable\/(?!1.8.4)/
+  # blocklist
+  except:
+    - /.*/
 
 linux: &linux
   os: linux
@@ -49,30 +51,29 @@ osx: &osx
     - conan user -p $CONAN_PASSWORD $CONAN_LOGIN_USERNAME -r lkeb-artifactory
     - conan upload -r lkeb-artifactory --all --force -c $CONAN_REFERENCE
 
-
 matrix:
-   include:
-      - <<: *linux
-        env:
-            - CONAN_COMPILERVERSION=9
-              CONAN_COMPILER=gcc
-              DOCKER_IMAGE=conanio/gcc9
-              CONAN_LIBC=libstdc++
+  include:
+    - <<: *linux
+      env:
+        - CONAN_COMPILERVERSION=9
+          CONAN_COMPILER=gcc
+          DOCKER_IMAGE=conanio/gcc9
+          CONAN_LIBC=libstdc++
 
-      - <<: *linux
-        env:
-            - CONAN_COMPILERVERSION=8
-              CONAN_COMPILER=gcc
-              DOCKER_IMAGE=conanio/gcc8
-              CONAN_LIBC=libstdc++
+    - <<: *linux
+      env:
+        - CONAN_COMPILERVERSION=8
+          CONAN_COMPILER=gcc
+          DOCKER_IMAGE=conanio/gcc8
+          CONAN_LIBC=libstdc++
 
-      - <<: *osx
-        osx_image: xcode9.4
-        env: CONAN_COMPILERVERSION=9.1 CONAN_APPLE_CLANG_VERSIONS=9.1 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.9 HOMEBREW_NO_AUTO_UPDATE=1
+    - <<: *osx
+      osx_image: xcode9.4
+      env: CONAN_COMPILERVERSION=9.1 CONAN_APPLE_CLANG_VERSIONS=9.1 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.9 HOMEBREW_NO_AUTO_UPDATE=1
 
-      - <<: *osx
-        osx_image: xcode10.3
-        env: CONAN_COMPILERVERSION=10.0 CONAN_APPLE_CLANG_VERSIONS=10.0 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.13 HOMEBREW_NO_AUTO_UPDATE=1
+    - <<: *osx
+      osx_image: xcode10.3
+      env: CONAN_COMPILERVERSION=10.0 CONAN_APPLE_CLANG_VERSIONS=10.0 CONAN_ARCHS=x86_64 CONAN_IS_TRAVIS_OSX=1 MACOSX_DEPLOYMENT_TARGET=10.13 HOMEBREW_NO_AUTO_UPDATE=1
 
 notifications:
   email:

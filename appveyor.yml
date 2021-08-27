@@ -4,30 +4,32 @@ skip_commits:
 
 # branches to build
 branches:
+  except:
+    - /.*/
   # exclude certain versions that do not build on Windows
-  only:
-    - /testing\/(?!1.8.4)/
-    - /stable\/(?!1.8.4)/
+  #only:
+  #  - /testing\/(?!1.8.4)/
+  #  - /stable\/(?!1.8.4)/
 
 environment:
-    PYTHON_HOME: "C:\\Python37"
-    CONAN_LOGIN_USERNAME: "admin"
-    CONAN_PASSWORD:
-        secure: g+1lNdgrCLmyKNf3KvbHSln5A1H7BsVhsMsIbwgo+UU=
-    CONAN_UPLOAD: https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local
-    CONAN_REMOTE: lkeb-artifactory
-    CONAN_STABLE_BRANCH_PATTERN: "stable/*"
+  PYTHON_HOME: "C:\\Python37"
+  CONAN_LOGIN_USERNAME: "admin"
+  CONAN_PASSWORD:
+    secure: g+1lNdgrCLmyKNf3KvbHSln5A1H7BsVhsMsIbwgo+UU=
+  CONAN_UPLOAD: https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local
+  CONAN_REMOTE: lkeb-artifactory
+  CONAN_STABLE_BRANCH_PATTERN: "stable/*"
 
-    CONAN_UPLOAD_ONLY_WHEN_STABLE: 1
+  CONAN_UPLOAD_ONLY_WHEN_STABLE: 1
 
-    matrix:
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-          CONAN_VISUAL_VERSIONS: 15
-          CONAN_ARCHS: x86_64
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      CONAN_VISUAL_VERSIONS: 15
+      CONAN_ARCHS: x86_64
 
-        - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-          CONAN_VISUAL_VERSIONS: 16
-          CONAN_ARCHS: x86_64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CONAN_VISUAL_VERSIONS: 16
+      CONAN_ARCHS: x86_64
 install:
   - set PATH=%PYTHON_HOME%;%PYTHON_HOME%/Scripts/;%PATH%
   - pip.exe install conan --upgrade
@@ -40,7 +42,7 @@ install:
 notifications:
   - provider: Email
     to:
-        - b.van_lew@lumc.nl
+      - b.van_lew@lumc.nl
     subject: "flann package Windows build: {{status}}"
     message: "URL is {{buildUrl}}."
     on_build_success: true
