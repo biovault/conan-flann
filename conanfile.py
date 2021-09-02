@@ -31,8 +31,8 @@ class FlannMultiConan(ConanFile):
     Approximate Nearest Neighbors by Marius Muja and David Lowe"""
     topics = ("nearest neighbor", "high dimensions", "approximated")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False]}
-    default_options = {"shared": True}
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = {"shared": True, "fPIC": True}
     generators = "CMakeDeps"
     exports = "cmake/*"
 
@@ -70,7 +70,7 @@ class FlannMultiConan(ConanFile):
         tc.variables["BUILD_DOC"] = "OFF"
         tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
         tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install"))
-
+        tc.variables["CMAKE_VERBOSE_MAKEFILE"] = "ON"
         if self.settings.os == "Linux":
             tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
 
@@ -145,6 +145,10 @@ include(./cmake/ConfigInstall.cmake)
                 "set(FLANN_VERSION 1.8.4)",
                 "set(FLANN_VERSION 1.8.5)",
             )
+
+    def configure(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
 
     def build(self):
         self._fixup_code()
