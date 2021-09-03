@@ -26,6 +26,8 @@ jobs:
     strategy:
       matrix:
         include:
+          # 1.8.4 doesn't build on windows so it is disabled.
+
           # - name: Windows-msvc2017
           #   os: windows-2016
           #   compiler: msvc-2017
@@ -62,6 +64,15 @@ jobs:
             os: macos-10.14
             build-compiler: apple-clang
             build-cversion: "10.0"
+            build-config: Release
+            build-os: Macos
+            build-xcode-version: 10.3
+            build-libcxx: libc++
+
+          - name: Macos_xcode10.3
+            os: macos-10.14
+            build-compiler: apple-clang
+            build-cversion: "12.0"
             build-config: Release
             build-os: Macos
             build-xcode-version: 10.3
