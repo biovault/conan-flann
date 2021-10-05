@@ -159,6 +159,9 @@ include(./cmake/ConfigInstall.cmake)
         cmake_release = self._configure_cmake()
         cmake_release.install(build_type="Release")
 
+        cmake_release = self._configure_cmake()
+        cmake_release.install(build_type="RelWithDebInfo")
+
     # Package has no build type marking
     def package_id(self):
         del self.info.settings.build_type

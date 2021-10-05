@@ -1,8 +1,16 @@
 ## Package Status
+###GitHub Actions status
 
-| Windows | Linux & macOS |
-|:--------:|:---------:|:-----------------:|
-|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-package_name?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-package_name)|[![Build Status](https://travis-ci.com/bincrafters/conan-package_name.svg)](https://travis-ci.com/bincrafters/conan-package_name)|
+![Branch stable/1.8.4_dual](https://github.com/biovault/conan-flann/actions/workflows/build.yml/badge.svg?branch=stable%2F1.8.4_dual)
+
+Currently the following build matrix is performed
+
+OS | Architecture | Compiler
+--- | --- | ---
+Linux | x86_64 | gcc 8
+Linux | x86_64 | gcc 9
+Macos | x86_64 | clang 10
+Macos | x86_64 | clang 12
 
 ## Conan Information
 
@@ -35,7 +43,7 @@ Both the C and CPP binding versions are built as are static and shared on all pl
 
 ### "dual" branch
 
-The branch with the *_dual* suffix in the name create a conan package containing both Debug and Release 
+The branch with the *_dual* suffix in the name create a conan package containing Debug, Release and RelWithDebInfo
 binaries.
 
 ## Issues
