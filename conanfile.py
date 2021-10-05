@@ -5,7 +5,7 @@ import os
 import shutil
 from pathlib import Path
 
-required_conan_version = ">=1.38.0"
+required_conan_version = ">=1.40.0"
 
 
 class FlannMultiConan(ConanFile):
@@ -87,7 +87,7 @@ class FlannMultiConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.configure(source_folder="flann")
+        cmake.configure(build_script_folder="flann")
         cmake.verbose = True
         return cmake
 
