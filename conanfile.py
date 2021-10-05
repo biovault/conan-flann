@@ -5,6 +5,8 @@ import os
 import shutil
 from pathlib import Path
 
+required_conan_version = ">=1.38.0"
+
 
 class FlannMultiConan(ConanFile):
     """Package flann in a multi config package.
