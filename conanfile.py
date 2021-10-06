@@ -40,15 +40,6 @@ class FlannDualConan(ConanFile):
                 'add_library(flann SHARED "")',
                 'add_library(flann SHARED "empty.cpp")',
             )
-        # This small hack might be useful to guarantee proper /MT /MD linkage
-        # in MSVC if the packaged project doesn't have variables to set it
-        # properly
-        conanproj = (
-            "project(flann)\n"
-            "include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)\n"
-            "conan_basic_setup()"
-        )
-        tools.replace_in_file("flann/CMakeLists.txt", "project(flann)", conanproj)
 
     def _get_tc(self):
         """Generate the CMake configuration using
