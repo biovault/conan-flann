@@ -178,8 +178,10 @@ include(./cmake/ConfigInstall.cmake)
         dst_bin = f"bin/{build_type}"
         if self.settings.os == "Windows":
             self.copy("*.exp", src=src_dir, dst=dst_lib, keep_path=False)
-        if (build_type == "Debug") and (self.settings.compiler == "Visual Studio"):
-            self.copy("*.pdb", src=src_dir, dst=dst_bin, keep_path=False)
+        if ((build_type == "Debug") or (build_type == "RelWithDebInfo")) and (
+            self.settings.compiler == "Visual Studio"
+        ):
+            self.copy("*.pdb", src=src_dir, dst=dst_lib, keep_path=False)
 
     def package(self):
         # cleanup excess installs - this is a kludge TODO fix cmake
