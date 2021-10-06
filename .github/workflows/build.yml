@@ -2,6 +2,8 @@ name: flann conan package
 
 on:
   push:
+    paths-ignore:
+      - "README.md"
     branches:
       - master
       - main
