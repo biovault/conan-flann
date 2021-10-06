@@ -1,6 +1,7 @@
 from conans import ConanFile, tools
 from conan.tools.cmake import CMakeDeps, CMake, CMakeToolchain
 import os
+import shutil
 from pathlib import Path
 
 required_conan_version = ">=1.40.0"
@@ -88,13 +89,71 @@ class FlannDualConan(ConanFile):
         cmake.verbose = True
         return cmake
 
+    def _fixup_code(self):
+        # Workaround for empty source error with CMake > 3.10
+        # see issue https://github.com/mariusmuja/flann/issues/369
+        if self.settings.os == "Linux" or self.settings.os == "Macos":
+            self.run("touch flann/src/cpp/empty.cpp")
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                'add_library(flann_cpp SHARED "")',
+                "add_library(flann_cpp SHARED empty.cpp)",
+            )
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                'add_library(flann SHARED "")',
+                'add_library(flann SHARED "empty.cpp")',
+            )
+        if self.settings.os == "Macos":
+            tools.replace_in_file(
+                "flann/src/cpp/flann/algorithms/kdtree_index.h",
+                "#include <cstring>",
+                """#include <cstring>
+#include <cmath>""",
+            )
+            # this is already correct in 1.8.5
+            # tools.replace_in_file(
+            #    "flann/src/cpp/flann/algorithms/kdtree_index.h", "abs", "std::fabs"
+            # )
+
+        # Inject flannTargets.cmake logic
+        # Logic for flannTargets.cmake
+        # This install logic is missing from flann:
+        # 1.8.5, 1.8.5 and 1.9.1 but is in master
+        shutil.copyfile(
+            "./cmake/Config.cmake.in",
+            "flann/cmake/Config.cmake.in",
+        )
+
+        shutil.copyfile(
+            "./cmake/ConfigInstall.cmake", "flann/cmake/ConfigInstall.cmake"
+        )
+
+        tools.replace_in_file(
+            "flann/CMakeLists.txt",
+            "# CPACK options",
+            """
+include(./cmake/ConfigInstall.cmake)
+
+# CPACK options""",
+        )
+
+        # Version is wrong in flann 1.8.5
+        if self.version == "1.8.5":
+            tools.replace_in_file(
+                "flann/CMakeLists.txt",
+                "set(FLANN_VERSION 1.8.4)",
+                "set(FLANN_VERSION 1.8.5)",
+            )
+
     def build(self):
+        self._fixup_code()
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake()
-        cmake_debug.build()
+        cmake_debug.install(build_type="Debug")
 
         cmake_release = self._configure_cmake()
-        cmake_release.build()
+        cmake_release.install(build_type="Release")
 
         cmake_release = self._configure_cmake()
         cmake_release.install(build_type="RelWithDebInfo")
