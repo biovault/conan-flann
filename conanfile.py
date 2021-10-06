@@ -17,8 +17,9 @@ class FlannDualConan(ConanFile):
     topics = ("nearest neighbor", "high dimensions", "approximated")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
-    default_options = "shared=True"
-    generators = "cmake"
+    default_options = {"shared": True}
+    generators = "CMakeDeps"
+    exports = "cmake/*"
 
     def source(self):
         self.run("git clone https://github.com/mariusmuja/flann.git")
