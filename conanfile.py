@@ -90,32 +90,6 @@ class FlannDualConan(ConanFile):
         return cmake
 
     def _fixup_code(self):
-        # Workaround for empty source error with CMake > 3.10
-        # see issue https://github.com/mariusmuja/flann/issues/369
-        if self.settings.os == "Linux" or self.settings.os == "Macos":
-            self.run("touch flann/src/cpp/empty.cpp")
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                'add_library(flann_cpp SHARED "")',
-                "add_library(flann_cpp SHARED empty.cpp)",
-            )
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                'add_library(flann SHARED "")',
-                'add_library(flann SHARED "empty.cpp")',
-            )
-        if self.settings.os == "Macos":
-            tools.replace_in_file(
-                "flann/src/cpp/flann/algorithms/kdtree_index.h",
-                "#include <cstring>",
-                """#include <cstring>
-#include <cmath>""",
-            )
-            # this is already correct in 1.8.5
-            # tools.replace_in_file(
-            #    "flann/src/cpp/flann/algorithms/kdtree_index.h", "abs", "std::fabs"
-            # )
-
         # Inject flannTargets.cmake logic
         # Logic for flannTargets.cmake
         # This install logic is missing from flann:
