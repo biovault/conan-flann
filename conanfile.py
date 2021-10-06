@@ -1,5 +1,7 @@
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, tools
+from conan.tools.cmake import CMakeDeps, CMake, CMakeToolchain
 import os
+from pathlib import Path
 
 required_conan_version = ">=1.40.0"
 
@@ -47,6 +49,47 @@ class FlannDualConan(ConanFile):
         )
         tools.replace_in_file("flann/CMakeLists.txt", "project(flann)", conanproj)
 
+    def _get_tc(self):
+        """Generate the CMake configuration using
+        multi-config generators on all platforms, as follows:
+
+        Windows - defaults to Visual Studio
+        Macos - XCode
+        Linux - Ninja Multi-Config
+
+        CMake needs to be at least 3.17 for Ninja Multi-Config
+
+        Returns:
+            CMakeToolchain: a configured toolchain object
+        """
+        generator = None
+        if self.settings.os == "Macos":
+            generator = "Xcode"
+
+        if self.settings.os == "Linux":
+            generator = "Ninja Multi-Config"
+
+        tc = CMakeToolchain(self, generator=generator)
+        tc.variables["BUILD_PYTHON_BINDINGS"] = "OFF"
+        tc.variables["BUILD_MATLAB_BINDINGS"] = "OFF"
+        tc.variables["BUILD_TESTS"] = "OFF"
+        tc.variables["BUILD_EXAMPLES"] = "OFF"
+        tc.variables["BUILD_DOC"] = "OFF"
+        tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
+        tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install"))
+
+        if self.settings.os == "Linux":
+            tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
+
+        return tc
+
+    def generate(self):
+        print("In generate")
+        tc = self._get_tc()
+        tc.generate()
+        deps = CMakeDeps(self)
+        deps.generate()
+
     def _configure_cmake(self, build_type):
         if self.settings.os == "Macos":
             cmake = CMake(self, generator="Xcode", build_type=build_type)
@@ -76,6 +119,17 @@ class FlannDualConan(ConanFile):
 
         cmake_release = self._configure_cmake()
         cmake_release.install(build_type="RelWithDebInfo")
+
+    # Package has no build type marking
+    def package_id(self):
+        del self.info.settings.build_type
+        if self.settings.compiler == "Visual Studio":
+            del self.info.settings.compiler.runtime
+
+    # Package contains its own cmake config file
+    def package_info(self):
+        self.cpp_info.set_property("skip_deps_file", True)
+        self.cpp_info.set_property("cmake_config_file", True)
 
     def _pkg_bin(self, build_type):
         src_dir = f"{self.build_folder}/lib/{build_type}"
