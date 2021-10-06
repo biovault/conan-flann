@@ -5,6 +5,8 @@ import os
 import shutil
 from pathlib import Path
 
+required_conan_version = ">=1.40.0"
+
 
 class FlannMultiConan(ConanFile):
     """Package flann in a multi config package.
@@ -85,7 +87,7 @@ class FlannMultiConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.configure(source_folder="flann")
+        cmake.configure(build_script_folder="flann")
         cmake.verbose = True
         return cmake
 
@@ -155,6 +157,9 @@ include(./cmake/ConfigInstall.cmake)
         cmake_release = self._configure_cmake()
         cmake_release.install(build_type="Release")
 
+        cmake_release = self._configure_cmake()
+        cmake_release.install(build_type="RelWithDebInfo")
+
     # Package has no build type marking
     def package_id(self):
         del self.info.settings.build_type
@@ -191,3 +196,5 @@ include(./cmake/ConfigInstall.cmake)
         self._pkg_bin("Debug")
         # Release
         self._pkg_bin("Release")
+        # Release
+        self._pkg_bin("RelWithDebInfo")

@@ -1,14 +1,29 @@
 ## Package Status
+###GitHub Actions status
 
-| Windows | Linux & macOS |
-|:--------:|:---------:|:-----------------:|
-|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-package_name?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-package_name)|[![Build Status](https://travis-ci.com/bincrafters/conan-package_name.svg)](https://travis-ci.com/bincrafters/conan-package_name)|
+![Branch stable/1.8.5_dual](https://github.com/biovault/conan-flann/actions/workflows/build.yml/badge.svg?branch=stable%2F1.8.5_dual)
+
+Currently the following build matrix is performed
+
+OS | Architecture | Compiler
+--- | --- | ---
+Windows | x84_64 | msvc 2017
+Windows | x84_64 | msvc 2019
+Linux | x86_64 | gcc 8
+Linux | x86_64 | gcc 9
+Macos | x86_64 | clang 10
+Macos | x86_64 | clang 12
+
+
+## General Information
+
+This GIT repository wraps the CMake base build for flann and produces a multiple (Release, Debug, RelWithDebInfo) conan package containing 
 
 ## Conan Information
 
 Building with conan. 
 
-- Install conan (at least 1.38)
+- Install conan (at least 1.40)
 - Create a profile (called build_profile) e.g. for Windows:
 ```
 [settings]
@@ -33,21 +48,50 @@ conan create . flann/1.8.5 --profile build_profile -s build_type=Release
 
 Both the C and CPP binding versions are built as are static and shared on all platforms. This means that library files with names flann.*, flann_s.*, flann_cpp.*, flann_cpp_s.*are produces (* is lib, dylib, dll depending on platform)
 
+The build includes **CMake Package Configuration Files**.
+
 ### "dual" branch
 
-The branch with the *_dual* suffix in the name create a conan package containing both Debug and Release 
+The branch with the *_dual* suffix in the name create a conan package containing Debug, Release and RelWithDebInfo
 binaries.
+
+
+## CI artifacts
+
+Artifacts produced are uploaded to https://lkeb-artifactory.lumc.nl/artifactory/api/conan/conan-local as flann/<version_number>@lkeb/stable.
+
+The artifact includes **CMake Package Configuration Files**.
+
+The conan packages contain a conan_package.tgz with the binaries for the supported configurations in the following tree structure:
+
+```text
+bin
+    flann_example.c
+include
+    flann
+        + include files and subdirectories
+lib
+    cmake
+        flann
+            flannConfig.cmake
+            + supporting files
+    Debug
+        + shared objects and static libs
+    Release
+        + shared objects and static libs
+    RelWIthDebInfo
+        + shared objects and static libs
+share
+    doc
+        flann
+            manual.pdf
+```
 
 ## Issues
 
-If you wish to report an issue or make a request for a Bincrafters package, please do so here:
+If you wish to report an issue or make a request for the package, please do so here:
 
-[Bincrafters Community Issues](https://github.com/bincrafters/community/issues)
-
-## General Information
-
-This GIT repository wraps the CMake base build for flann and produces a multiple (Release & Debug) conan package containing 
-
+[conan-flann issues](https://github.com/biovault/conan-flann/issues)
 
 ## License Information
 
