@@ -90,31 +90,18 @@ class FlannDualConan(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
 
-    def _configure_cmake(self, build_type):
-        if self.settings.os == "Macos":
-            cmake = CMake(self, generator="Xcode", build_type=build_type)
-        else:
-            cmake = CMake(self, build_type=build_type)
-        # <bvl> These don't work out of the box on Windows and are not needed
-        # for my environment.
-        # If someone can get them working that would be great!
-        cmake.definitions["BUILD_PYTHON_BINDINGS"] = "OFF"
-        cmake.definitions["BUILD_MATLAB_BINDINGS"] = "OFF"
-        cmake.definitions["BUILD_TESTS"] = "OFF"
-        cmake.definitions["BUILD_EXAMPLES"] = "OFF"
-        # work around failure to produce .lib file for flann_cpp
-        if self.settings.os == "Windows" and self.options.shared:
-            cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = True
+    def _configure_cmake(self):
+        cmake = CMake(self)
         cmake.configure(build_script_folder="flann")
         cmake.verbose = True
         return cmake
 
     def build(self):
         # Build both release and debug for dual packaging
-        cmake_debug = self._configure_cmake("Debug")
+        cmake_debug = self._configure_cmake()
         cmake_debug.build()
 
-        cmake_release = self._configure_cmake("Release")
+        cmake_release = self._configure_cmake()
         cmake_release.build()
 
         cmake_release = self._configure_cmake()
