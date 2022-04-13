@@ -1,10 +1,11 @@
 from conans import ConanFile, tools
 from conan.tools.cmake import CMakeDeps, CMake, CMakeToolchain
+from conans.tools import os_info, SystemPackageTool
 import os
 import shutil
 from pathlib import Path
 
-required_conan_version = ">=1.40.0"
+required_conan_version = ">=1.43.0"
 
 
 class FlannDualConan(ConanFile):
@@ -21,14 +22,15 @@ class FlannDualConan(ConanFile):
     default_options = {"shared": True}
     generators = "CMakeDeps"
     exports = "cmake/*"
+    requires = ("hdf5/1.12.1")
 
     def source(self):
-        self.run("git clone https://github.com/mariusmuja/flann.git")
+        self.run("git clone https://github.com/flann-lib/flann.git")
         os.chdir("./flann")
         self.run("git checkout tags/{0}".format(self.version))
         os.chdir("..")
         # Workaround for empty source error with CMake > 3.10
-        # see issue https://github.com/mariusmuja/flann/issues/369
+        # see issue https://github.com/flann-lib/flann/issues/369
         if self.settings.os == "Linux" or self.settings.os == "Macos":
             self.run("touch flann/src/cpp/empty.cpp")
             tools.replace_in_file(
@@ -41,6 +43,48 @@ class FlannDualConan(ConanFile):
                 'add_library(flann SHARED "")',
                 'add_library(flann SHARED "empty.cpp")',
             )
+        # Correct the Macos link to work with Find_package(OpenMP) and brew
+        if self.settings.os == "Macos":
+            tools.replace_in_file(
+                "flann/CmakeLists.txt",
+                "cmake_minimum_required(VERSION 2.6)",
+                "cmake_minimum_required(VERSION 3.15)",
+            )
+            tools.replace_in_file(
+                "flann/CmakeLists.txt",            
+                'option(BUILD_MATLAB_BINDINGS "Build Matlab bindings" ON)',
+                'option(BUILD_MATLAB_BINDINGS "Build Matlab bindings" OFF)',
+            )
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                "if(MINGW AND OPENMP_FOUND)",
+                "if(OPENMP_FOUND)"
+            )
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                'target_link_libraries(flann gomp)',
+                """
+target_link_libraries(flann $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> $<$<LINK_LANGUAGE:C>:${OpenMP_C_LIBRARIES}>)
+message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> $<$<LINK_LANGUAGE:C>:${OpenMP_C_LIBRARIES}>")
+""",
+            )
+
+    def system_requirements(self):
+        if os_info.is_macos:
+            installer = SystemPackageTool()
+            installer.install('libomp')
+
+    def build_requirements(self):
+        # Used to test flann
+        if os_info.is_macos:
+            # This is renamed in a to tool_requires in conan 1.47
+            #self.build_requires("hdf5/1.12.1@")
+            pass
+
+
+    
+    def requirements(self):
+        pass
 
     def _get_tc(self):
         """Generate the CMake configuration using
@@ -124,13 +168,16 @@ include(./cmake/ConfigInstall.cmake)
         self._fixup_code()
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake()
-        cmake_debug.install(build_type="Debug")
+        cmake_debug.build(build_type = "Debug")
+        cmake_debug.install(build_type = "Debug")
 
         cmake_release = self._configure_cmake()
-        cmake_release.install(build_type="Release")
+        cmake_release.build(build_type = "Release")
+        cmake_release.install(build_type = "Release")
 
-        cmake_release = self._configure_cmake()
-        cmake_release.install(build_type="RelWithDebInfo")
+        cmake_relwdeb = self._configure_cmake()
+        cmake_relwdeb.build(build_type = "RelWithDebInfo")
+        cmake_relwdeb.install(build_type = "RelWithDebInfo")
 
     # Package has no build type marking
     def package_id(self):

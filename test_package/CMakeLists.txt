@@ -18,9 +18,9 @@ add_executable(example example.cpp)
 if (APPLE)
     add_custom_command(TARGET example
        POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
-        "-change" "libflann.1.8.dylib" "${flann_ROOT}/lib/Release/libflann.1.8.dylib"
+        "-change" "libflann.1.9.dylib" "${flann_ROOT}/lib/Release/libflann.1.9.dylib"
         "${CMAKE_BINARY_DIR}/example")
 endif()
 
 #hdf5 and lz4 supplied by CMakeDeps
-target_link_libraries(example flann HDF5::HDF5 lz4::lz4 OpenMP::OpenMP_CXX)
+target_link_libraries(example flann hdf5::hdf5_cpp lz4::lz4 OpenMP::OpenMP_CXX)
