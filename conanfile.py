@@ -5,7 +5,7 @@ import os
 import shutil
 from pathlib import Path
 
-required_conan_version = ">=1.43.0"
+required_conan_version = ">=1.51.0"
 
 
 class FlannDualConan(ConanFile):
