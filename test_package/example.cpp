@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 
     // construct an randomized kd-tree index using 4 kd-trees
     Index<L2<float> > index(dataset, flann::KDTreeIndexParams(4));
-    index.buildIndex();                                                                                               
+    index.buildIndex();
 
     // do a knn search, using 128 checks
     index.knnSearch(query, indices, dists, nn, flann::SearchParams(128));
@@ -31,6 +31,6 @@ int main(int argc, char** argv)
     delete[] query.ptr();
     delete[] indices.ptr();
     delete[] dists.ptr();
-    
+
     return 0;
 }
