@@ -156,13 +156,16 @@ include(./cmake/ConfigInstall.cmake)
         self._fixup_code()
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake()
+        cmake_debug.build(build_type="Debug")
         cmake_debug.install(build_type="Debug")
 
         cmake_release = self._configure_cmake()
+        cmake_release.build(build_type="Release")
         cmake_release.install(build_type="Release")
 
-        cmake_release = self._configure_cmake()
-        cmake_release.install(build_type="RelWithDebInfo")
+        cmake_releasewd = self._configure_cmake()
+        cmake_releasewd.build(build_type="RelWithDebInfo")
+        cmake_releasewd.install(build_type="RelWithDebInfo")
 
     # Package has no build type marking
     def package_id(self):
