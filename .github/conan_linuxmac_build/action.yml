@@ -74,8 +74,12 @@ runs:
         conan profile update settings.compiler.libcxx=${{ inputs.conan-libcxx-version}} action_build
         conan profile show action_build
         export CONAN_SKIP_BROKEN_SYMLINKS_CHECK=1
-        conan create . flann/1.8.5@lkeb/stable -pr:h action_build -pr:b action_build -s build_type=Release
-
+# Skip testing on linux due to unmet hdf5 dependency in test package 
+        if [[ ${{ inputs.conan-build-os }} == "Macos" ]]; then
+          conan create . flann/1.8.5@lkeb/stable -pr:h action_build -pr:b action_build -s build_type=Release
+        else
+          conan create . flann/1.8.5@lkeb/stable -pr:h action_build -pr:b action_build -s build_type=Release -tf None
+        fi
       shell: bash
       env:
         BUILD_SHARED: True
