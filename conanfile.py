@@ -152,12 +152,15 @@ include(./cmake/ConfigInstall.cmake)
         self._fixup_code()
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake()
+        cmake_debug.build(build_type="Debug")
         cmake_debug.install(build_type="Debug")
 
         cmake_release = self._configure_cmake()
+        cmake_release.build(build_type="Release")
         cmake_release.install(build_type="Release")
 
         cmake_release = self._configure_cmake()
+        cmake_release.build(build_type="RelWithDebInfo")
         cmake_release.install(build_type="RelWithDebInfo")
 
     # Package has no build type marking
@@ -175,7 +178,6 @@ include(./cmake/ConfigInstall.cmake)
         print(f"package: {build_type}")
         src_dir = f"{self.build_folder}/lib/{build_type}"
         dst_lib = f"lib/{build_type}"
-        dst_bin = f"bin/{build_type}"
         if self.settings.os == "Windows":
             self.copy("*.exp", src=src_dir, dst=dst_lib, keep_path=False)
         if ((build_type == "Debug") or (build_type == "RelWithDebInfo")) and (
