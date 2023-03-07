@@ -4,6 +4,7 @@ import numpy as np
 from conans import ConanFile, tools
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from pathlib import Path
+import subprocess
 
 
 class FlannTestConan(ConanFile):
@@ -12,6 +13,16 @@ class FlannTestConan(ConanFile):
     generators = "CMakeDeps"
     requires = ("hdf5/1.10.6", "lz4/1.9.2")
     exports = "CMakeLists.txt", "example.cpp"
+
+    def system_requirements(self):
+        if os_info.is_macos:
+            proc = subprocess.run(
+                "brew --prefix libomp", shell=True, capture_output=True
+            )
+            subprocess.run(
+                f"ln {proc.stdout.decode('UTF-8').strip()}/lib/libomp.dylib /usr/local/lib/libomp.dylib",
+                shell=True,
+            )
 
     def generate(self):
         print("Generating toolchain")
@@ -40,7 +51,7 @@ class FlannTestConan(ConanFile):
                 f.create_dataset("dataset", data=np_d)
                 f.create_dataset("query", data=np_q)
             print("Running example...")
-            
+
             if self.settings.os == "Windows":
                 self.run(str(Path(Path.cwd(), "Release", "example.exe")))
             else:
