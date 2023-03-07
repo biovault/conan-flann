@@ -19,6 +19,13 @@ class FlannTestConan(ConanFile):
         tc.variables["flann_ROOT"] = Path(
             self.deps_cpp_info["flann"].rootpath
         ).as_posix()
+        if self.settings.os == "Macos":
+            proc = subprocess.run(
+                "brew --prefix libomp", shell=True, capture_output=True
+            )
+            tc.variables["OpenMP_ROOT"] = Path(
+                proc.stdout.decode("UTF-8").strip()
+            ).as_posix()
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
@@ -40,7 +47,7 @@ class FlannTestConan(ConanFile):
                 f.create_dataset("dataset", data=np_d)
                 f.create_dataset("query", data=np_q)
             print("Running example...")
-            
+
             if self.settings.os == "Windows":
                 self.run(str(Path(Path.cwd(), "Release", "example.exe")))
             else:
