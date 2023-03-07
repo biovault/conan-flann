@@ -14,22 +14,19 @@ class FlannTestConan(ConanFile):
     requires = ("hdf5/1.10.6", "lz4/1.9.2")
     exports = "CMakeLists.txt", "example.cpp"
 
-    def system_requirements(self):
-        if os_info.is_macos:
-            proc = subprocess.run(
-                "brew --prefix libomp", shell=True, capture_output=True
-            )
-            subprocess.run(
-                f"ln {proc.stdout.decode('UTF-8').strip()}/lib/libomp.dylib /usr/local/lib/libomp.dylib",
-                shell=True,
-            )
-
     def generate(self):
         print("Generating toolchain")
         tc = CMakeToolchain(self)
         tc.variables["flann_ROOT"] = Path(
             self.deps_cpp_info["flann"].rootpath
         ).as_posix()
+        if self.settings.os == "Macos":
+            proc = subprocess.run(
+                "brew --prefix libomp", shell=True, capture_output=True
+            )
+            tc.variables["OpenMP_ROOT"] = Path(
+                proc.stdout.decode("UTF-8").strip()
+            ).as_posix()
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
