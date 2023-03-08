@@ -4,6 +4,7 @@ import numpy as np
 from conans import ConanFile, tools
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from pathlib import Path
+import subprocess
 
 
 class FlannTestConan(ConanFile):
