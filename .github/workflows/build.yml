@@ -61,6 +61,15 @@ jobs:
             build-config: Release
             build-os: Linux
             build-libcxx: libstdc++
+            
+          # GLIBC >= 2.28
+          - name: Linux_gcc9
+            os: ubuntu-20.04
+            build-compiler: gcc
+            build-cversion: 10
+            build-config: Release
+            build-os: Linux
+            build-libcxx: libstdc++
 
           #- name: Macos_xcode10.3
           #  os: macOS-latest
