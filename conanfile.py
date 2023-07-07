@@ -22,7 +22,6 @@ class FlannDualConan(ConanFile):
     default_options = {"shared": True}
     generators = "CMakeDeps"
     exports = "cmake/*"
-    requires = ("hdf5/1.12.1")
 
     def source(self):
         self.run("git clone https://github.com/flann-lib/flann.git")
