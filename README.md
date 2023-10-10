@@ -1,7 +1,7 @@
 ## Package Status
 ###GitHub Actions status
 
-![Branch stable/1.9.1_dual](https://github.com/biovault/conan-flann/actions/workflows/build.yml/badge.svg?branch=stable%2F1.9.1_dual)
+![Branch stable/1.9.2_dual](https://github.com/biovault/conan-flann/actions/workflows/build.yml/badge.svg?branch=stable%2F1.9.2_dual)
 
 Currently the following build matrix is performed
 
@@ -41,7 +41,7 @@ compiler.version=15
 
 - from the package route run :
 ```
-conan create . flann/1.9.1 --profile build_profile -s build_type=Release
+conan create . flann/1.9.2 --profile build_profile -s build_type=Release
 ```
 
 ### What gets built?
