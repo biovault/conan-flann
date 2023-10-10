@@ -83,7 +83,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 
     
     def requirements(self):
-        pass
+        self.requires.add("lz4/1.9.2")
 
     def _get_tc(self):
         """Generate the CMake configuration using
