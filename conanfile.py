@@ -131,8 +131,11 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         tc.variables["LZ4_INCLUDE_DIRS"] = Path(
             self.deps_cpp_info["lz4"].rootpath, 'include'
         ).as_posix()
+        lz4lib = 'lz4.lib'
+        if self.settings.os == "Linux" or self.settings.os == "Macos":
+            lz4lib = 'liblz4.a'
         tc.variables["LZ4_LINK_LIBRARIES"] = Path(
-            self.deps_cpp_info["lz4"].rootpath, 'lib', 'lz4.lib'
+            self.deps_cpp_info["lz4"].rootpath, 'lib', f'{lz4lib}'
         ).as_posix()
         print(f"*********** LZ4_INCLUDE_DIRS: {tc.variables['LZ4_INCLUDE_DIRS']} ***********")
 
