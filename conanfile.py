@@ -43,14 +43,29 @@ class FlannDualConan(ConanFile):
         #         'add_library(flann SHARED "empty.cpp")',
         #     )
         # Correct the Macos link to work with Find_package(OpenMP) and brew
-        if self.settings.os == "Macos":
+        if self.settings.os == "Macos" or self.settings.os == "Windows":
             tools.replace_in_file(
-                "flann/CmakeLists.txt",
+                "flann/CMakeLists.txt",
                 "cmake_minimum_required(VERSION 2.6)",
                 "cmake_minimum_required(VERSION 3.15)",
             )
+
+
+        # PkgConfig tools is not in Windows - this is handled by toolchain
+        tools.replace_in_file(
+            "flann/CMakeLists.txt",
+            "find_package(PkgConfig REQUIRED)",
+            "message(STATUS \"LZ4 INCLUDE DIRS: ${LZ4_INCLUDE_DIRS} LZ4 LINK LIBRARIES: ${LZ4_LINK_LIBRARIES}\")",
+        )
+        tools.replace_in_file(
+            "flann/CMakeLists.txt",
+            "pkg_check_modules(LZ4 REQUIRED liblz4)",
+            "",
+        )
+
+        if self.settings.os == "Macos":
             tools.replace_in_file(
-                "flann/CmakeLists.txt",            
+                "flann/CMakeLists.txt",            
                 'option(BUILD_MATLAB_BINDINGS "Build Matlab bindings" ON)',
                 'option(BUILD_MATLAB_BINDINGS "Build Matlab bindings" OFF)',
             )
@@ -112,7 +127,14 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         tc.variables["BUILD_EXAMPLES"] = "OFF"
         tc.variables["BUILD_DOC"] = "OFF"
         tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
-        tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install"))
+        tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install").as_posix())
+        tc.variables["LZ4_INCLUDE_DIRS"] = Path(
+            self.deps_cpp_info["lz4"].rootpath, 'include'
+        ).as_posix()
+        tc.variables["LZ4_LINK_LIBRARIES"] = Path(
+            self.deps_cpp_info["lz4"].rootpath, 'lib', 'lz4.lib'
+        ).as_posix()
+        print(f"*********** LZ4_INCLUDE_DIRS: {tc.variables['LZ4_INCLUDE_DIRS']} ***********")
 
         if self.settings.os == "Linux":
             tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
@@ -123,8 +145,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         print("In generate")
         tc = self._get_tc()
         tc.generate()
-        deps = CMakeDeps(self)
-        deps.generate()
+        CMakeDeps(self).generate()
 
     def _configure_cmake(self):
         cmake = CMake(self)
