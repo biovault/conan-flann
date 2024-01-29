@@ -167,6 +167,17 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 
     # CPACK options""",
             )
+        else:
+            tools.replace_in_file(
+                "flann/cmake/flann_utils.cmake",
+                "set(FLANN_LIB_INSTALL_DIR \"lib${LIB_SUFFIX}\")",
+                "set(FLANN_LIB_INSTALL_DIR \"lib${LIB_SUFFIX}/$<CONFIG>\")"
+            )
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                "RUNTIME DESTINATION bin",
+                "RUNTIME DESTINATION bin/$<CONFIG>"
+            )           
 
         # Version is wrong in flann 1.8.5
         if self.version == "1.8.5":
@@ -206,6 +217,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         src_dir = f"{self.build_folder}/lib/{build_type}"
         dst_lib = f"lib/{build_type}"
         dst_bin = f"bin/{build_type}"
+        self.copy("*flann_cpp_s.lib", src=src_dir, dst=dst_lib, keep_path=False)
         self.copy("*flann.lib", src=src_dir, dst=dst_lib, keep_path=False)
         self.copy("*.dll", src=src_dir, dst=dst_bin, keep_path=False)
         self.copy("*.so", src=src_dir, dst=dst_lib, keep_path=False)

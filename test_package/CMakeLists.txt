@@ -23,4 +23,4 @@ if (APPLE)
 endif()
 
 #hdf5 and lz4 supplied by CMakeDeps
-target_link_libraries(example flann hdf5::hdf5_cpp lz4::lz4 OpenMP::OpenMP_CXX)
+target_link_libraries(example flann::flann hdf5::hdf5_cpp lz4::lz4 OpenMP::OpenMP_CXX)
