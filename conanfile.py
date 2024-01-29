@@ -28,20 +28,7 @@ class FlannDualConan(ConanFile):
         os.chdir("./flann")
         self.run("git checkout tags/{0}".format(self.version))
         os.chdir("..")
-        # Workaround for empty source error with CMake > 3.10
-        # see issue https://github.com/flann-lib/flann/issues/369
-        # if self.settings.os == "Linux" or self.settings.os == "Macos":
-        #     self.run("touch flann/src/cpp/empty.cpp")
-        #     tools.replace_in_file(
-        #         "flann/src/cpp/CMakeLists.txt",
-        #         'add_library(flann_cpp SHARED "")',
-        #         "add_library(flann_cpp SHARED empty.cpp)",
-        #     )
-        #     tools.replace_in_file(
-        #         "flann/src/cpp/CMakeLists.txt",
-        #         'add_library(flann SHARED "")',
-        #         'add_library(flann SHARED "empty.cpp")',
-        #     )
+
         # Correct the Macos link to work with Find_package(OpenMP) and brew
         if self.settings.os == "Macos" or self.settings.os == "Windows":
             tools.replace_in_file(
@@ -161,23 +148,25 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         # Logic for flannTargets.cmake
         # This install logic is missing from flann:
         # 1.8.5, 1.8.5 and 1.9.1 but is in master
-        shutil.copyfile(
-            "./cmake/Config.cmake.in",
-            "flann/cmake/Config.cmake.in",
-        )
+        # It is presentin flann 1.9.2 version (called flann-targets)
+        if tools.Version(self.version) < "1.9.2":
+            shutil.copyfile(
+                "./cmake/Config.cmake.in",
+                "flann/cmake/Config.cmake.in",
+            )
 
-        shutil.copyfile(
-            "./cmake/ConfigInstall.cmake", "flann/cmake/ConfigInstall.cmake"
-        )
+            shutil.copyfile(
+                "./cmake/ConfigInstall.cmake", "flann/cmake/ConfigInstall.cmake"
+            )
 
-        tools.replace_in_file(
-            "flann/CMakeLists.txt",
-            "# CPACK options",
-            """
-include(./cmake/ConfigInstall.cmake)
+            tools.replace_in_file(
+                "flann/CMakeLists.txt",
+                "# CPACK options",
+                """
+    include(./cmake/ConfigInstall.cmake)
 
-# CPACK options""",
-        )
+    # CPACK options""",
+            )
 
         # Version is wrong in flann 1.8.5
         if self.version == "1.8.5":
