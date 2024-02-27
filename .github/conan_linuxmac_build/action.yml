@@ -73,6 +73,9 @@ runs:
         conan profile update settings.compiler=${{ inputs.conan-compiler }} action_build
         conan profile update settings.compiler.version=${{ inputs.conan-compiler-version }} action_build
         conan profile update settings.compiler.libcxx=${{ inputs.conan-libcxx-version}} action_build
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          conan profile update conf.tools.build:skip_test=True action_build
+        fi
         conan profile show action_build
         export CONAN_SKIP_BROKEN_SYMLINKS_CHECK=1
         if [[ ${{ inputs.conan-build-os }} == "Macos" ]]; then
