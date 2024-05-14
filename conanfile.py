@@ -81,11 +81,14 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
             # This is renamed in a to tool_requires in conan 1.47
             #self.build_requires("hdf5/1.12.1@")
             pass
-
-
-    
+   
     def requirements(self):
         self.requires.add("lz4/1.9.2")
+
+    def compatibility(self):
+        if self.settings.compiler == "apple-clang" and self.settings.compiler.version == "14":
+        return [{"settings": [("compiler.version", v)]}
+                for v in ("13", "14")]
 
     def _get_tc(self):
         """Generate the CMake configuration using
