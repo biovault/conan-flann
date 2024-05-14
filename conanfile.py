@@ -85,10 +85,9 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
     def requirements(self):
         self.requires.add("lz4/1.9.2")
 
-    def compatibility(self):
-        if self.settings.compiler == "apple-clang" and self.settings.compiler.version == "14":
-            return [{"settings": [("compiler.version", v)]}
-                for v in ("13", "14")]
+	def compatibility(self):
+		if self.settings.compiler == "apple-clang":
+			return [{"settings": [("compiler.version", "13")]}]
 
     def _get_tc(self):
         """Generate the CMake configuration using
