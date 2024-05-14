@@ -87,7 +87,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 
     def compatibility(self):
         if self.settings.compiler == "apple-clang" and self.settings.compiler.version == "14":
-        return [{"settings": [("compiler.version", v)]}
+            return [{"settings": [("compiler.version", v)]}
                 for v in ("13", "14")]
 
     def _get_tc(self):
