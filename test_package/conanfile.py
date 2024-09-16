@@ -11,7 +11,7 @@ class FlannTestConan(ConanFile):
     name = "FlannTest"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeDeps"
-    requires = ("hdf5/1.12.1", "lz4/1.9.2")
+    requires = ("hdf5/1.14.2", "lz4/1.10.0")
     exports = "CMakeLists.txt", "example.cpp"
 
     def generate(self):
