@@ -26,12 +26,6 @@ jobs:
     strategy:
       matrix:
         include:
-          #- name: Windows-msvc2017
-          #  os: windows-2016
-          #  compiler: msvc-2017
-          #  build-cversion: 15
-          #  build-runtime: MD
-          #  build-config: Release
 
           - name: Windows-msvc2019
             os: windows-2019
@@ -40,14 +34,12 @@ jobs:
             build-runtime: MD
             build-config: Release
 
-          # GLIBC <= 2.27
-          #- name: Linux_gcc8
-          #  os: ubuntu-18.04
-          #  build-compiler: gcc
-          #  build-cversion: 8
-          #  build-config: Release
-          #  build-os: Linux
-          #  build-libcxx: libstdc++
+          - name: Windows-msvc2022
+            os: windows-2022
+            compiler: msvc-2022
+            build-cversion: 17
+            build-runtime: MD
+            build-config: Release
 
           # GLIBC >= 2.28
           - name: Linux_gcc9
@@ -77,33 +69,6 @@ jobs:
             build-os: Linux
             build-libcxx: libstdc++11
 
-          # - name: Macos_xcode10.3
-          #  os: macOS-latest
-          #  build-compiler: apple-clang
-          #  build-cversion: "10.0"
-          #  build-config: Release
-          #  build-os: Macos
-          #  build-xcode-version: 10.3
-          #  build-libcxx: libc++
-
-          #- name: Macos_xcode12.4
-          #  os: macOS-11
-          #  build-compiler: apple-clang
-          #  build-cversion: "12.0"
-          #  build-config: Release
-          #  build-os: Macos
-          #  build-xcode-version: 12.4
-          #  build-libcxx: libc++
-
-          #- name: Macos_xcode13.2.1
-          #  os: macOS-11
-          #  build-compiler: apple-clang
-          #  build-cversion: "13"
-          #  build-config: Release
-          #  build-os: Macos
-          #  build-xcode-version: 13.2.1
-          #  build-libcxx: libc++
-
           - name: Macos_xcode13.4
             os: macos-12
             build-compiler: apple-clang
@@ -121,8 +86,16 @@ jobs:
             build-os: Macos
             build-xcode-version: 14.3
             build-libcxx: libc++
-  
 
+          - name: Macos_xcode15
+            os: macos-14
+            build-compiler: apple-clang
+            build-cversion: 15
+            build-config: Release
+            build-os: Macos
+            build-xcode-version: 15.4
+            build-libcxx: libc++
+  
     steps:
       - name: Checkout the source
         uses: actions/checkout@v2
@@ -136,7 +109,7 @@ jobs:
           brew install libomp
 
       - name: Setup python version
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
