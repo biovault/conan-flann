@@ -85,20 +85,9 @@ runs:
         conan profile update settings.compiler=${{ inputs.conan-compiler }} action_build
         conan profile update settings.compiler.version=${{ inputs.conan-compiler-version }} action_build
         conan profile update settings.compiler.libcxx=${{ inputs.conan-libcxx-version}} action_build
-        if [[ "$OSTYPE" == "darwin"* ]]; then
-          conan profile update conf.tools.build:skip_test=True action_build
-          conan profile new compatibility
-          conan profile update settings.zlib/1.2.13:compiler.version=13 compatibility
-          conan profile update settings.lz4/1.9.2:compiler.version=13 compatibility
-          conan profile update settings.hdf5/1.12.1:compiler.version=13 compatibility
-        fi
         conan profile show action_build
         export CONAN_SKIP_BROKEN_SYMLINKS_CHECK=1
-        if [[ ${{ inputs.conan-build-os }} == "Macos" ]]; then
-          conan create . flann/1.9.2@lkeb/stable -pr:h action_build -pr:b action_build -pr compatibility -s build_type=Release
-        else
-          conan create . flann/1.9.2@lkeb/stable -pr:h action_build -pr:b action_build -s build_type=Release -tf None
-        fi
+        conan create . flann/1.9.2@lkeb/stable -pr:h action_build -pr:b action_build -s build_type=Release -tf None
 
       shell: bash
       env:
