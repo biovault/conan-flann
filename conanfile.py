@@ -74,14 +74,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         if os_info.is_macos:
             installer = SystemPackageTool()
             installer.install('libomp')
-
-    def build_requirements(self):
-        # Used to test flann
-        if os_info.is_macos:
-            # This is renamed in a to tool_requires in conan 1.47
-            #self.build_requires("hdf5/1.12.1@")
-            pass
-   
+  
     def requirements(self):
         self.requires.add("lz4/1.10.0")
 

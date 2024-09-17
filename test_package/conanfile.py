@@ -20,6 +20,9 @@ class FlannTestConan(ConanFile):
         tc.variables["flann_ROOT"] = Path(
             self.deps_cpp_info["flann"].rootpath
         ).as_posix()
+        tc.variables["HDF5_ROOT"] =Path(
+            self.deps_cpp_info["hdf5"].rootpath
+        ).as_posix()
         if self.settings.os == "Macos":
             proc = subprocess.run(
                 "brew --prefix libomp", shell=True, capture_output=True
