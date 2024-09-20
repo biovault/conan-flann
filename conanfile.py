@@ -136,14 +136,15 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         tc.variables["BUILD_C_BINDINGS"] = "OFF"
         tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
         tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install").as_posix())
-        tc.variables["LZ4_INCLUDE_DIRS"] = Path(
+        tc.variables["lz4_ROOT"] = str(Path(self.deps_cpp_info["lz4"].rootpath, "lib").as_posix())
+        tc.variables["LZ4_INCLUDE_DIRS"] = Path(self.deps_cpp_info["lz4"].rootpath,
             self.deps_cpp_info["lz4"].rootpath, 'include'
         ).as_posix()
         lz4lib = 'lz4.lib'
         if self.settings.os == "Linux" or self.settings.os == "Macos":
             lz4lib = 'liblz4.a'
         tc.variables["LZ4_LINK_LIBRARIES"] = Path(
-            self.deps_cpp_info["lz4"].rootpath, 'lib', f'{lz4lib}'
+            self.deps_cpp_info["lz4"].rootpath, 'lib', '$<CONFIG>', f'{lz4lib}'
         ).as_posix()
         print(f"*********** LZ4_INCLUDE_DIRS: {tc.variables['LZ4_INCLUDE_DIRS']} ***********")
 
@@ -219,9 +220,6 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         cmake_release.build(build_type = "Release")
         cmake_release.install(build_type = "Release")
 
-        cmake_relwdeb = self._configure_cmake()
-        cmake_relwdeb.build(build_type = "RelWithDebInfo")
-        cmake_relwdeb.install(build_type = "RelWithDebInfo")
 
     # Package has no build type marking
     def package_id(self):
@@ -263,5 +261,4 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         self._pkg_bin("Debug")
         # Release
         self._pkg_bin("Release")
-        # RelWithDebInfo
-        self._pkg_bin("RelWithDebInfo")
+
