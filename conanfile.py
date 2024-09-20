@@ -42,7 +42,12 @@ class FlannDualConan(ConanFile):
         tools.replace_in_file(
             "flann/CMakeLists.txt",
             "find_package(PkgConfig REQUIRED)",
-            "message(STATUS \"LZ4 INCLUDE DIRS: ${LZ4_INCLUDE_DIRS} LZ4 LINK LIBRARIES: ${LZ4_LINK_LIBRARIES}\")",
+            """
+    find_package(lz4 CONFIG REQUIRED)
+    message(STATUS \"LZ4 INCLUDE DIRS: ${LZ4_INCLUDE_DIRS} \")
+    message(STATUS \"LZ4 LINK LIBRARIES ${LZ4_LINK_LIBRARIES} \")
+    message(STATUS \"LZ4 ROOT ${lz4_ROOT} \")
+            """,
         )
         tools.replace_in_file(
             "flann/CMakeLists.txt",
@@ -70,13 +75,37 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 """,
             )
 
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                "target_link_libraries(flann_cpp_s ${LZ4_LINK_LIBRARIES})",
+                "target_link_libraries(flann_cpp_s lz4::lz4)"
+            )
+
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                "target_link_libraries(flann_cpp ${LZ4_LINK_LIBRARIES})",
+                "target_link_libraries(flann_cpp lz4::lz4)"
+            )
+
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                "target_link_libraries(flann_s ${LZ4_LINK_LIBRARIES})",
+                "target_link_libraries(flann_s lz4::lz4)"
+            )
+
+            tools.replace_in_file(
+                "flann/src/cpp/CMakeLists.txt",
+                "target_link_libraries(flann ${LZ4_LINK_LIBRARIES})",
+                "target_link_libraries(flann ${lz4_LIBRARIES})"
+            )
+
     def system_requirements(self):
         if os_info.is_macos:
             installer = SystemPackageTool()
             installer.install('libomp')
   
     def requirements(self):
-        self.requires.add("lz4/1.10.0")
+        self.requires.add("lz4/1.10.0@lkeb/stable")
 
     def _get_tc(self):
         """Generate the CMake configuration using
@@ -104,6 +133,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         tc.variables["BUILD_TESTS"] = "OFF"
         tc.variables["BUILD_EXAMPLES"] = "OFF"
         tc.variables["BUILD_DOC"] = "OFF"
+        tc.variables["BUILD_C_BINDINGS"] = "OFF"
         tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
         tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install").as_posix())
         tc.variables["LZ4_INCLUDE_DIRS"] = Path(

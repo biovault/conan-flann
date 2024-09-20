@@ -11,7 +11,7 @@ class FlannTestConan(ConanFile):
     name = "FlannTest"
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeDeps"
-    requires = ("hdf5/1.14.2", "lz4/1.10.0")
+    requires = ("hdf5/1.14.2@lkeb/stable", "lz4/1.10.0@lkeb/stable")
     exports = "CMakeLists.txt", "example.cpp"
 
     def generate(self):
@@ -23,6 +23,9 @@ class FlannTestConan(ConanFile):
         tc.variables["HDF5_ROOT"] =Path(
             self.deps_cpp_info["hdf5"].rootpath
         ).as_posix()
+        tc.variables["lz4_ROOT"] =Path(
+            self.deps_cpp_info["lz4"].rootpath
+        ).as_posix()
         if self.settings.os == "Macos":
             proc = subprocess.run(
                 "brew --prefix libomp", shell=True, capture_output=True
@@ -31,8 +34,6 @@ class FlannTestConan(ConanFile):
                 proc.stdout.decode("UTF-8").strip()
             ).as_posix()
         tc.generate()
-        deps = CMakeDeps(self)
-        deps.generate()
 
     def build(self):
         cmake = CMake(self)
