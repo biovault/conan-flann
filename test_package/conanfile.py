@@ -5,12 +5,12 @@ from conans import ConanFile, tools
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps
 from pathlib import Path
 import subprocess
+import shutil
 
 
 class FlannTestConan(ConanFile):
     name = "FlannTest"
     settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeDeps"
     requires = ("hdf5/1.14.2@lkeb/stable", "lz4/1.10.0@lkeb/stable")
     exports = "CMakeLists.txt", "example.cpp"
 
@@ -54,6 +54,10 @@ class FlannTestConan(ConanFile):
             print("Running example...")
 
             if self.settings.os == "Windows":
+                shutil.copy(
+                    Path(self.deps_cpp_info["lz4"].rootpath, "bin", "Release", "lz4.dll"),
+                    Path(Path.cwd(), "Release")
+                )      
                 self.run(str(Path(Path.cwd(), "Release", "example.exe")))
             else:
                 self.run(str(Path(Path.cwd(), "example")))
