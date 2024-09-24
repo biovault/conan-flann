@@ -28,7 +28,7 @@ class FlannDualConan(ConanFile):
         os.chdir("./flann")
         self.run("git checkout tags/{0}".format(self.version))
         os.chdir("..")
-
+        print(f"Working files: {os.listdir()} Curdir: {Path(os.curdir).absolute()}")
         # Correct the Macos link to work with Find_package(OpenMP) and brew
         if self.settings.os == "Macos" or self.settings.os == "Windows":
             tools.replace_in_file(
@@ -36,7 +36,6 @@ class FlannDualConan(ConanFile):
                 "cmake_minimum_required(VERSION 2.6)",
                 "cmake_minimum_required(VERSION 3.15)",
             )
-
 
         # PkgConfig tools is not in Windows - this is handled by toolchain
         tools.replace_in_file(
@@ -57,53 +56,53 @@ class FlannDualConan(ConanFile):
 
         if self.settings.os == "Macos":
             tools.replace_in_file(
-                "flann/CMakeLists.txt",            
+                "flann/CMakeLists.txt",
                 'option(BUILD_MATLAB_BINDINGS "Build Matlab bindings" ON)',
                 'option(BUILD_MATLAB_BINDINGS "Build Matlab bindings" OFF)',
             )
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                "if(MINGW AND OPENMP_FOUND)",
-                "if(OPENMP_FOUND)"
-            )
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                'target_link_libraries(flann gomp)',
-                """
+        tools.replace_in_file(
+            "flann/src/cpp/CMakeLists.txt",
+            "if(MINGW AND OPENMP_FOUND)",
+            "if(OPENMP_FOUND)",
+        )
+        tools.replace_in_file(
+            "flann/src/cpp/CMakeLists.txt",
+            "target_link_libraries(flann gomp)",
+            """
 target_link_libraries(flann $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> $<$<LINK_LANGUAGE:C>:${OpenMP_C_LIBRARIES}>)
 message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> $<$<LINK_LANGUAGE:C>:${OpenMP_C_LIBRARIES}>")
 """,
-            )
+        )
 
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                "target_link_libraries(flann_cpp_s ${LZ4_LINK_LIBRARIES})",
-                "target_link_libraries(flann_cpp_s lz4::lz4)"
-            )
+        tools.replace_in_file(
+            "flann/src/cpp/CMakeLists.txt",
+            "target_link_libraries(flann_cpp_s ${LZ4_LINK_LIBRARIES})",
+            "target_link_libraries(flann_cpp_s lz4::lz4)",
+        )
 
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                "target_link_libraries(flann_cpp ${LZ4_LINK_LIBRARIES})",
-                "target_link_libraries(flann_cpp lz4::lz4)"
-            )
+        tools.replace_in_file(
+            "flann/src/cpp/CMakeLists.txt",
+            "target_link_libraries(flann_cpp ${LZ4_LINK_LIBRARIES})",
+            "target_link_libraries(flann_cpp lz4::lz4)",
+        )
 
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                "target_link_libraries(flann_s ${LZ4_LINK_LIBRARIES})",
-                "target_link_libraries(flann_s lz4::lz4)"
-            )
+        tools.replace_in_file(
+            "flann/src/cpp/CMakeLists.txt",
+            "target_link_libraries(flann_s ${LZ4_LINK_LIBRARIES})",
+            "target_link_libraries(flann_s lz4::lz4)",
+        )
 
-            tools.replace_in_file(
-                "flann/src/cpp/CMakeLists.txt",
-                "target_link_libraries(flann ${LZ4_LINK_LIBRARIES})",
-                "target_link_libraries(flann ${lz4_LIBRARIES})"
-            )
+        tools.replace_in_file(
+            "flann/src/cpp/CMakeLists.txt",
+            "target_link_libraries(flann ${LZ4_LINK_LIBRARIES})",
+            "target_link_libraries(flann lz4::lz4)",
+        )
 
     def system_requirements(self):
         if os_info.is_macos:
             installer = SystemPackageTool()
-            installer.install('libomp')
-  
+            installer.install("libomp")
+
     def requirements(self):
         self.requires.add("lz4/1.10.0@lkeb/stable")
 
@@ -135,18 +134,26 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         tc.variables["BUILD_DOC"] = "OFF"
         tc.variables["BUILD_C_BINDINGS"] = "OFF"
         tc.variables["CMAKE_TOOLCHAIN_FILE"] = "conan_toolchain.cmake"
-        tc.variables["CMAKE_INSTALL_PREFIX"] = str(Path(self.build_folder, "install").as_posix())
-        tc.variables["lz4_ROOT"] = str(Path(self.deps_cpp_info["lz4"].rootpath, "lib").as_posix())
-        tc.variables["LZ4_INCLUDE_DIRS"] = Path(self.deps_cpp_info["lz4"].rootpath,
-            self.deps_cpp_info["lz4"].rootpath, 'include'
+        tc.variables["CMAKE_INSTALL_PREFIX"] = str(
+            Path(self.build_folder, "install").as_posix()
+        )
+        tc.variables["lz4_ROOT"] = str(
+            Path(self.deps_cpp_info["lz4"].rootpath, "lib").as_posix()
+        )
+        tc.variables["LZ4_INCLUDE_DIRS"] = Path(
+            self.deps_cpp_info["lz4"].rootpath,
+            self.deps_cpp_info["lz4"].rootpath,
+            "include",
         ).as_posix()
-        lz4lib = 'lz4.lib'
+        lz4lib = "lz4.lib"
         if self.settings.os == "Linux" or self.settings.os == "Macos":
-            lz4lib = 'liblz4.a'
+            lz4lib = "liblz4.a"
         tc.variables["LZ4_LINK_LIBRARIES"] = Path(
-            self.deps_cpp_info["lz4"].rootpath, 'lib', '$<CONFIG>', f'{lz4lib}'
+            self.deps_cpp_info["lz4"].rootpath, "lib", "$<CONFIG>", f"{lz4lib}"
         ).as_posix()
-        print(f"*********** LZ4_INCLUDE_DIRS: {tc.variables['LZ4_INCLUDE_DIRS']} ***********")
+        print(
+            f"*********** LZ4_INCLUDE_DIRS: {tc.variables['LZ4_INCLUDE_DIRS']} ***********"
+        )
 
         if self.settings.os == "Linux":
             tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
@@ -161,7 +168,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 
     def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.configure(build_script_folder="flann")
+        cmake.configure(build_script_folder="flann", cli_args=["--trace"])
         cmake.verbose = True
         return cmake
 
@@ -192,14 +199,14 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         else:
             tools.replace_in_file(
                 "flann/cmake/flann_utils.cmake",
-                "set(FLANN_LIB_INSTALL_DIR \"lib${LIB_SUFFIX}\")",
-                "set(FLANN_LIB_INSTALL_DIR \"lib${LIB_SUFFIX}/$<CONFIG>\")"
+                'set(FLANN_LIB_INSTALL_DIR "lib${LIB_SUFFIX}")',
+                'set(FLANN_LIB_INSTALL_DIR "lib${LIB_SUFFIX}/$<CONFIG>")',
             )
             tools.replace_in_file(
                 "flann/src/cpp/CMakeLists.txt",
                 "RUNTIME DESTINATION bin",
-                "RUNTIME DESTINATION bin/$<CONFIG>"
-            )           
+                "RUNTIME DESTINATION bin/$<CONFIG>",
+            )
 
         # Version is wrong in flann 1.8.5
         if self.version == "1.8.5":
@@ -213,13 +220,12 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         self._fixup_code()
         # Build both release and debug for dual packaging
         cmake_debug = self._configure_cmake()
-        cmake_debug.build(build_type = "Debug")
-        cmake_debug.install(build_type = "Debug")
+        cmake_debug.build(build_type="Debug")
+        cmake_debug.install(build_type="Debug")
 
         cmake_release = self._configure_cmake()
-        cmake_release.build(build_type = "Release")
-        cmake_release.install(build_type = "Release")
-
+        cmake_release.build(build_type="Release")
+        cmake_release.install(build_type="Release")
 
     # Package has no build type marking
     def package_id(self):
@@ -261,4 +267,3 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         self._pkg_bin("Debug")
         # Release
         self._pkg_bin("Release")
-
