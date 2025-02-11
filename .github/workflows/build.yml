@@ -113,7 +113,7 @@ jobs:
           platform: x64
 
       - name: Windows build
-        if: startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.os, 'windows')
         uses: ./.github/conan_windows_build
         with:
           conan-visual-version: ${{matrix.build-cversion}}
@@ -122,8 +122,8 @@ jobs:
           conan-user: ${{secrets.LKEB_ARTIFACTORY_USER}}
           conan-password: ${{secrets.LKEB_ARTIFACTORY_PASSWORD}}
 
-      - name: Mac build
-        if: "!startsWith(runner.os, 'Windows')"
+      - name: Linux build
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/conan_linuxmac_build
         with:
           conan-compiler: ${{matrix.build-compiler}}
@@ -134,7 +134,7 @@ jobs:
           conan-user: ${{secrets.LKEB_ARTIFACTORY_USER}}
           conan-password: ${{secrets.LKEB_ARTIFACTORY_PASSWORD}}
 
-      - name: Linux build
+      - name: Mac build
         if: startsWith(matrix.os, 'macOS')
         uses: ./.github/conan_linuxmac_build
         with:
