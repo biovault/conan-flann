@@ -224,6 +224,10 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         cmake_debug.install(build_type="Debug")
 
         cmake_release = self._configure_cmake()
+        cmake_release.build(build_type="RelWithDebInfo")
+        cmake_release.install(build_type="RelWithDebInfo")
+        
+        cmake_release = self._configure_cmake()
         cmake_release.build(build_type="Release")
         cmake_release.install(build_type="Release")
 
@@ -265,5 +269,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 
         # Debug
         self._pkg_bin("Debug")
+        # RelWithDebInfo
+        self._pkg_bin("RelWithDebInfo")
         # Release
         self._pkg_bin("Release")
