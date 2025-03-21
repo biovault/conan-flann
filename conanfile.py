@@ -161,6 +161,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
 
         if self.settings.os == "Linux":
             tc.variables["CMAKE_C_STANDARD"] = "17"
+            tc.variables["CMAKE_C_STANDARD_REQUIRED"] = "ON"
         return tc
 
     def generate(self):
