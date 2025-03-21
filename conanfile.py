@@ -152,12 +152,15 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
             self.deps_cpp_info["lz4"].rootpath, "lib", "$<CONFIG>", f"{lz4lib}"
         ).as_posix()
         print(
-            f"*********** LZ4_INCLUDE_DIRS: {tc.variables['LZ4_INCLUDE_DIRS']} ***********"
+            "*********** LZ4_INCLUDE_DIRS:"
+            f" {tc.variables['LZ4_INCLUDE_DIRS']} ***********"
         )
 
         if self.settings.os == "Linux":
             tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
 
+        if self.settings.os == "Linux":
+            tc.variables["CMAKE_C_STANDARD"] = "17"
         return tc
 
     def generate(self):
@@ -226,7 +229,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         cmake_release = self._configure_cmake()
         cmake_release.build(build_type="RelWithDebInfo")
         cmake_release.install(build_type="RelWithDebInfo")
-        
+
         cmake_release = self._configure_cmake()
         cmake_release.build(build_type="Release")
         cmake_release.install(build_type="Release")
