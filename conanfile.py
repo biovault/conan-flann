@@ -159,10 +159,10 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         if self.settings.os == "Linux":
             tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
 
-        if self.settings.os == "Linux":
-            tc.variables["CMAKE_C_STANDARD"] = "17"
-            tc.variables["CMAKE_C_STANDARD_REQUIRED"] = "ON"
-            tc.variables["CMAKE_C_EXTENSIONS"] = "OFF"
+        # if self.settings.os == "Linux":
+        #    tc.variables["CMAKE_C_STANDARD"] = "17"
+        #    tc.variables["CMAKE_C_STANDARD_REQUIRED"] = "ON"
+        #    tc.variables["CMAKE_C_EXTENSIONS"] = "OFF"
         return tc
 
     def generate(self):
