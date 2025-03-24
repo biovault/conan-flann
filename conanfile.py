@@ -159,8 +159,8 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
         if self.settings.os == "Linux":
             tc.variables["CMAKE_CONFIGURATION_TYPES"] = "Debug;Release"
 
-        if self.settings.os == "Linux":
-            tc.variables["CMAKE_C_FLAGS"] = "${CMAKE_C_FLAGS} -m64 -std=c17"
+        if self.settings.os == "Linux" and self.settings.compiler.version == "14":
+            tc.variables["CMAKE_C_FLAGS"] = "${CMAKE_C_FLAGS} -m64 -std=c99"
 
         # if self.settings.os == "Linux":
         #    tc.variables["CMAKE_C_STANDARD"] = "17"
