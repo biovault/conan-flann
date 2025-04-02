@@ -38,7 +38,7 @@ runs:
         pip install wheel
         pip install conan~=1.66.0
         pip install "markupsafe<2.1"
-        pip install -Iv cmake>=3.17
+        pip install -Iv cmake<4.0,>=3.17
         pip install h5py
         if [[ ${{ inputs.conan-build-os }} == "Linux" ]]; then sudo apt-get install -y ninja-build; fi
 
@@ -56,7 +56,7 @@ runs:
 
       shell: bash
 
-# The lkeb-artifactory remote is the source for everything
+    # The lkeb-artifactory remote is the source for everything
     - name: Build with conan
       run: |
         export CONAN_USER_HOME=`pwd`/_conan
