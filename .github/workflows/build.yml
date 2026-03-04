@@ -228,9 +228,8 @@ jobs:
           conan-libcxx-version: ${{matrix.build-libcxx}}
           conan-build-type: ${{matrix.build-config}}
           conan-build-os: ${{matrix.build-os}}
-          conan-user: ${{secrets.LKEB_UPLOAD_USER}}
-          conan-password: ${{secrets.LKEB_UPLOAD_USER_PASSWORD}}
-          conan-pem: ${{secrets.LKEB_UPLOAD_CERT_CHAIN}}
+          conan-user: ${{secrets.LKEB_ARTIFACTORY_USER}}
+          conan-password: ${{secrets.LKEB_ARTIFACTORY_PASSWORD}}
           conan-cc: ${{matrix.build-cversion}}
           conan-cxx: ${{matrix.build-cversion}} 
           conan-channel: python       
