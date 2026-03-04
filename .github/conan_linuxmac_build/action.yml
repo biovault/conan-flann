@@ -29,18 +29,28 @@ inputs:
   conan-password:
     description: "pass secrets.LKEB_ARTIFACTORY_PASSWORD"
     required: true
+  conan-channel:
+    description: "The reference channel one of [stable python]"
+    default: "stable" # Default value for input2
+    required: false
 
 runs:
   using: "composite"
   steps:
     - name: Install conan & build configuration
       run: |
-        pip install wheel
-        pip install conan~=1.66.0
-        pip install "markupsafe<2.1"
-        pip install -Iv "cmake>=3.17,<4.0"
-        pip install h5py
-        if [[ ${{ inputs.conan-build-os }} == "Linux" ]]; then sudo apt-get install -y ninja-build; fi
+        pip3 install wheel
+        pip3 install conan~=1.66.0
+        pip3 install "markupsafe<2.1"
+        pip3 install -Iv "cmake>=3.17,<4.0"
+        pip3 install h5py
+        if [[ ${{ inputs.conan-build-os }} == "Linux" ]]; then 
+          if [[ ${{ inputs.conan-channel }} == "python" ]]; then
+            dnf install -y ninja-build
+          else 
+            sudo apt-get install -y ninja-build
+          fi
+        fi
 
         export CONAN_CMAKE_PROGRAM=`which cmake`
         echo CMake version:
@@ -54,11 +64,22 @@ runs:
         conanhome=`conan config home`
         cat cert.pem >> $conanhome/cacert.pem
 
+        if [[ ${{ inputs.conan-build-os }} == "Linux" ]] && [[ ${{ inputs.conan-channel }} == "python" ]]; then
+          dnf install -y openblas-devel
+          dnf install -y gcc-toolset-${{ inputs.conan-compiler-version}}-gcc gcc-toolset-${{ inputs.conan-compiler-version}}-gcc-c++
+        fi
+
       shell: bash
 
     # The lkeb-artifactory remote is the source for everything
     - name: Build with conan
       run: |
+        if [[ ${{ inputs.conan-build-os }} == "Linux" ]] && [[ ${{ inputs.conan-channel }} == "python" ]]; then
+          source scl_source enable gcc-toolset-${{ inputs.conan-compiler-version }}
+          export CC=`which gcc`  
+          export CXX=`which g++`
+        fi
+
         export CONAN_USER_HOME=`pwd`/_conan
         echo Add LKEB artifactory as remote
         conan remote add $CONAN_LKEB_ARTIFACTORY $CONAN_UPLOAD
@@ -84,7 +105,7 @@ runs:
         conan profile update settings.compiler.libcxx=${{ inputs.conan-libcxx-version}} action_build
         conan profile show action_build
         export CONAN_SKIP_BROKEN_SYMLINKS_CHECK=1
-        conan create . flann/1.9.2@lkeb/stable -pr:h action_build -pr:b action_build -s build_type=Release -tf None
+        conan create . flann/1.9.2@lkeb/${{ inputs.conan-channel }} -pr:h action_build -pr:b action_build -s build_type=Release -tf None
 
       shell: bash
       env:
