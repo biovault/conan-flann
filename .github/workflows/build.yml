@@ -51,6 +51,16 @@ jobs:
             build-os: Linux
             build-libcxx: libstdc++11
 
+          - name: Linux_gcc12
+            os: ubuntu-24.04
+            build-cc: gcc
+            build-cxx: g++
+            build-compiler: gcc
+            build-cversion: 12
+            build-config: Release
+            build-os: Linux
+            build-libcxx: libstdc++11
+
           - name: Linux_gcc13
             os: ubuntu-24.04
             build-cc: gcc
