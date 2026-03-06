@@ -104,7 +104,7 @@ message(STATUS "OpenMP library: $<$<LINK_LANGUAGE:CXX>:${OpenMP_CXX_LIBRARIES}> 
             installer.install("libomp")
 
     def requirements(self):
-        self.requires.add("lz4/1.10.0@lkeb/stable")
+        self.requires.add("lz4/1.10.0@lkeb/%s" % self.channel)
 
     def _get_tc(self):
         """Generate the CMake configuration using
